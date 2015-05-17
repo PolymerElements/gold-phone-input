@@ -5,7 +5,9 @@ phone number.
 
 Example:
 
-    <gold-phone-input></gold-phone-input>
+```html
+<gold-phone-input></gold-phone-input>
 
-    <gold-phone-input country-code="33" phone-number-pattern="X-XX-XX-XX-XX">
-    </gold-phone-input>
+<gold-phone-input country-code="33" phone-number-pattern="X-XX-XX-XX-XX">
+</gold-phone-input>
+```
