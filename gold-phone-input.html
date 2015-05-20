@@ -60,7 +60,9 @@ Example:
         <input is="iron-input" id="input" class="flex"
           required$="[[required]]"
           bind-value="{{value}}"
-          name$="[[name]]">
+          name$="[[name]]"
+          allowed-pattern="[0-9]"
+          prevent-invalid-input>
       </div>
 
       <template is="dom-if" if="[[errorMessage]]">
