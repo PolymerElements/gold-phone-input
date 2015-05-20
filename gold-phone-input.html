@@ -59,7 +59,8 @@ Example:
 
         <input is="iron-input" id="input" class="flex"
           required$="[[required]]"
-          bind-value="{{value}}">
+          bind-value="{{value}}"
+          name$="[[name]]">
       </div>
 
       <template is="dom-if" if="[[errorMessage]]">
@@ -125,7 +126,7 @@ Example:
         this.$.container.invalid = !this.$.input.validate();
       }
     },
-      
+
     _computeValue: function(value) {
       var start = this.$.input.selectionStart;
       var previousCharADash = this.value.charAt(start - 1) == '-';
