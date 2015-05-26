@@ -7,11 +7,9 @@
   ],
   "keywords": [
     "web-components",
-    "web-component",
     "polymer",
     "gold",
-    "input",
-    "phone"
+    "input"
   ],
   "main": [
     "gold-phone-input.html"
