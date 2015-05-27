@@ -70,7 +70,7 @@ style this element.
     width: 40px;
   }
 
-  #label {
+  label.item-label {
     left: 40px;
   }
   </style>
@@ -78,14 +78,14 @@ style this element.
   <template>
     <paper-input-container id="container" auto-validate="[[autoValidate]]">
 
-      <template is="dom-if" if="[[label]]">
-        <label id="label">[[label]]</label>
-      </template>
+      <label class="item-label" hidden$="[[!label]]">[[label]]</label>
 
       <div class="horizontal layout">
         <span>+<span>[[countryCode]]</span></span>
 
         <input is="iron-input" id="input" class="flex"
+          aria-labelledby$="[[_ariaLabelledBy]]"
+          aria-describedby$="[[_ariaDescribedBy]]"
           required$="[[required]]"
           bind-value="{{value}}"
           name$="[[name]]"
