@@ -70,15 +70,12 @@ style this element.
     width: 40px;
   }
 
-  label.item-label {
-    left: 40px;
-  }
   </style>
 
   <template>
     <paper-input-container id="container" auto-validate="[[autoValidate]]">
 
-      <label class="item-label" hidden$="[[!label]]">[[label]]</label>
+      <label style="left:40px;" hidden$="[[!label]]">[[label]]</label>
 
       <div class="horizontal layout">
         <span>+<span>[[countryCode]]</span></span>
