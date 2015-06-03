@@ -80,17 +80,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         assert.notEqual(getComputedStyle(error).display, 'none', 'error is not display:none');
       });
 
-      // TODO: re-enable when PolymerElements/iron-input/issues/24 is fixed.
-      // test('caret position is preserved', function() {
-      //   var input = fixture('required');
-      //   var ironInput = input.querySelector('input[is="iron-input"]');
-      //   input.value='111-111-1';
-      //   ironInput.selectionStart = (2,2);
-      //   input.value='112-111-11';
-      //
-      //   assert.equal(ironInput.selectionStart, 2, 'selectionStart is preserved');
-      //   assert.equal(ironInput.selectionEnd, 2, 'selectionEnd is preserved');
-      // });
+      test('caret position is preserved', function() {
+        var input = fixture('required');
+        var ironInput = Polymer.dom(input.root).querySelector('input[is="iron-input"]');
+        input.value='111-111-1';
+        ironInput.selectionStart = 2;
+        ironInput.selectionEnd = 2;
+        input._computeValue('112-111-11');
+
+        assert.equal(ironInput.selectionStart, 2, 'selectionStart is preserved');
+        assert.equal(ironInput.selectionEnd, 2, 'selectionEnd is preserved');
+      });
 
       suite('a11y', function() {
 

@@ -89,7 +89,7 @@ style this element.
           required$="[[required]]"
           bind-value="{{value}}"
           name$="[[name]]"
-          allowed-pattern="[0-9]"
+          allowed-pattern="[0-9\-]"
           autocomplete="tel"
           type="tel"
           prevent-invalid-input
@@ -192,13 +192,14 @@ style this element.
 
         formattedValue += value[i];
       }
-
-      this.value = formattedValue.trim();
+      this.updateValueAndPreserveCaret(formattedValue.trim());
 
       // If the character right before the selection is a newly inserted
       // dash, we need to advance the selection to maintain the caret position.
-      if (!previousCharADash && this.value.charAt(start - 1) == '-')
-        this.$.input.selectionStart++;
+      if (!previousCharADash && this.value.charAt(start - 1) == '-') {
+        this.$.input.selectionStart = start + 1;
+        this.$.input.selectionEnd = start + 1;
+      }
     }
 
   })
