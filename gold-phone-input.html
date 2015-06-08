@@ -72,7 +72,11 @@ style this element.
   </style>
 
   <template>
-    <paper-input-container id="container" auto-validate="[[autoValidate]]">
+    <paper-input-container id="container" auto-validate="[[autoValidate]]"
+        disabled$="[[disabled]]"
+        no-label-float="[[noLabelFloat]]"
+        always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]"
+        invalid="[[invalid]]">
 
       <label style="left:40px;" hidden$="[[!label]]">[[label]]</label>
 
@@ -88,7 +92,14 @@ style this element.
           allowed-pattern="[0-9]"
           autocomplete="tel"
           type="tel"
-          prevent-invalid-input>
+          prevent-invalid-input
+          disabled$="[[disabled]]"
+          invalid="{{invalid}}"
+          autofocus$="[[autofocus]]"
+          inputmode$="[[inputmode]]"
+          placeholder$="[[placeholder]]"
+          readonly$="[[readonly]]"
+          size$="[[size]]>
       </div>
 
       <template is="dom-if" if="[[errorMessage]]">
