@@ -154,6 +154,15 @@ style this element.
         type: String,
         value: 'XXX-XXX-XXXX',
         observer: '_phoneNumberPatternChanged'
+      },
+
+      /**
+       * International format of the input value.
+       * @type {String}
+       */
+      internationalValue: {
+        type: String,
+        computed: '_computeInternationalValue(countryCode, value)'
       }
     },
 
@@ -207,6 +216,14 @@ style this element.
         this.$.input.selectionStart = start + 1;
         this.$.input.selectionEnd = start + 1;
       }
+    },
+
+    /**
+     * Returns the phone number value prefixed by the country code or simply
+     * the value if the country code is not set.
+     */
+    _computeInternationalValue: function(countryCode, value) {
+      return countryCode ? '+(' + countryCode + ')' + value : value;
     }
 
   })
