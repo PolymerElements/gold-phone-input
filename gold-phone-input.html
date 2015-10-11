@@ -181,6 +181,14 @@ style this element.
       this.$.input.pattern = regex;
     },
 
+    _phoneNumberNoPatterns: function() {
+      var regex = '';
+      regex = this.value.replace(/[^0-9 ]/g, "");
+
+      var phoneNumberNoPatterns = '+' + this.countryCode + regex;
+      return phoneNumberNoPatterns;
+    },
+
     /**
      * A handler that is called on input
      */
