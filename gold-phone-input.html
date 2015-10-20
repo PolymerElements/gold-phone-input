@@ -194,7 +194,7 @@ style this element.
 
       // Remove any already-applied formatting.
       value = value.replace(/-/g, '');
-      var shouldFormat = value.length <= this.phoneNumberPattern.replace(/-/g, '').length;
+      var shouldFormat = true;
       var formattedValue = '';
 
       // Fill in the dashes according to the specified pattern.
