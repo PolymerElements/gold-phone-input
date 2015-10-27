@@ -11,9 +11,7 @@
     "gold",
     "input"
   ],
-  "main": [
-    "gold-phone-input.html"
-  ],
+  "main": "gold-phone-input.html",
   "private": true,
   "repository": {
     "type": "git",
