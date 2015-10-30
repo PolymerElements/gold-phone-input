@@ -9,6 +9,8 @@ Edit this file, and the bot will squash your changes :)
 
 -->
 
+[![Build Status](https://travis-ci.org/PolymerElements/gold-phone-input.svg?branch=master)](https://travis-ci.org/PolymerElements/gold-phone-input)
+
 _[Demo and API Docs](https://elements.polymer-project.org/elements/gold-phone-input)_
 
 
