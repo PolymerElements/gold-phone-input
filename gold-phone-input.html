@@ -11,9 +11,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../paper-input/paper-input-behavior.html">
 <link rel="import" href="../paper-input/paper-input-container.html">
 <link rel="import" href="../paper-input/paper-input-error.html">
+<link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../iron-input/iron-input.html">
 <link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
-<link rel="import" href="../iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 
 <!--
 `<gold-phone-input>` is a single-line text field with Material Design styling
@@ -75,11 +76,19 @@ style this element.
     @apply(--gold-phone-input-country-code);
   }
 
+  .container {
+    @apply(--layout-horizontal);
+  }
+
   /* TODO(notwaldorf): The style applied by paper-input-container is more
    * specific, and we need the important to override it. This will go away
    * once we can refactor this element to use the paper-input suffix */
   label {
     left: 40px !important;
+  }
+
+  input {
+    @apply(--layout-flex);
   }
 
   </style>
@@ -93,10 +102,10 @@ style this element.
 
       <label hidden$="[[!label]]">[[label]]</label>
 
-      <div class="horizontal layout">
+      <div class="container">
          <span class="country-code">+[[countryCode]]</span>
 
-        <input is="iron-input" id="input" class="flex"
+        <input is="iron-input" id="input"
           aria-labelledby$="[[_ariaLabelledBy]]"
           aria-describedby$="[[_ariaDescribedBy]]"
           required$="[[required]]"
