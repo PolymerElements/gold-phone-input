@@ -11,7 +11,7 @@ env:
     - secure: Q1UtnrlEUZCCuAhnPymq5CNbmLYsOy0AqK7mY+wqdqugnix4uQjVt5AgVj9+1MRiqDb43Ftb/bdIJO/HYizYcgODoqm2VSOMjPJURIR1dZyAMt/8Ua8Fn9QOyTCE7lOnr+n+XtjR8gpWLZf8jpdwBvuPPXr5aVz8ZByWH8rprRpiRqo435YFMRoa2zf1PhguKLxXKsyM9V/kdYy/WYQyLVpNdbyqCvj8czf9RryI0ZQ9ETjjAnGIDWefCjI2o01CJDx/5RYdtprEBslcyTw0gYwe9hfvnzDz7TKdBp8B3ssYthYG5rfxADIIQdBcKCJL+3KnoUJD8zMRNleMPWrqgCYPOuCQq+bV3qx/zlFa5ziQURTHMWAxJt1gFpqv4A5atlgefaLm+0KzQu/0MQV7PffCLAUe+l9MhtY9VbSpVMNvro1YteRwYX6x3bdDVq++fsTFBs3+xmvnOsEVIRYOWalUf2w6wVPi+bUfeTRM6cX2WpyyQ7QTVDJVA7CoQN/3GxnMp0wuL0/G2riEZcYONpzEGeqeHDFgLvbXR3+49SYw/zGf4pdDDB6+x+Wq57DcdwcY7hbmP5Ws2zyzqTaecbM40zypUb4XRsCo4ZTi27kGPzkchqUk0yxqUR5HZpKbpjQ8tpGl5O6qtT0L7eeD4BG2MWPVes0k8pVZ9OxFDyw=
 node_js: 4
 addons:
-  firefox: '42.0'
+  firefox: latest
   apt:
     sources:
       - google-chrome
