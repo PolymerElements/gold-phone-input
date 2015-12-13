@@ -200,15 +200,15 @@ style this element.
      * A handler that is called on input
      */
     _onValueChanged: function(value, oldValue) {
-       // The initial property assignment is handled by `ready`.
-       if (oldValue == undefined)
-         return;
+      // The initial property assignment is handled by `ready`.
+      if (oldValue == undefined)
+        return;
 
       var start = this.$.input.selectionStart;
       var previousCharADash = value ? this.value.charAt(start - 1) == '-' : false;
 
       // Remove any already-applied formatting.
-      value = value.replace(/-/g, '');
+      value = (value)? value.replace(/-/g, '') : '';
       var shouldFormat = value.length <= this.phoneNumberPattern.replace(/-/g, '').length;
       var formattedValue = '';
 
