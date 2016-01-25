@@ -204,8 +204,11 @@ style this element.
        if (oldValue == undefined)
          return;
 
+      //Ensure value is a string
+      value = value ? value.toString() : '';
+
       var start = this.$.input.selectionStart;
-      var previousCharADash = value ? this.value.charAt(start - 1) == '-' : false;
+      var previousCharADash = value ? value.charAt(start - 1) == '-' : false;
 
       // Remove any already-applied formatting.
       value = value.replace(/-/g, '');
