@@ -204,6 +204,9 @@ style this element.
        if (oldValue == undefined)
          return;
 
+      //Ensure value is a string
+      value = value.toString();
+
       var start = this.$.input.selectionStart;
       var previousCharADash = value ? this.value.charAt(start - 1) == '-' : false;
 
