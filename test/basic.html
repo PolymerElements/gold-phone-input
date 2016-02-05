@@ -82,6 +82,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var input = fixture('required');
         forceXIfStamp(input);
 
+        var alreadyDone = false;
         var error = Polymer.dom(input.root).querySelector('paper-input-error');
         assert.ok(error, 'paper-input-error exists');
 
@@ -90,7 +91,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         input.addEventListener('blur', function(event) {
           assert(!input.focused, 'input is blurred');
           assert.notEqual(getComputedStyle(error).visibility, 'hidden', 'error is not visibility:hidden');
-          done();
+
+            if (!alreadyDone) {
+              alreadyDone = true;
+              done();
+            }
         });
         MockInteractions.focus(input.inputElement);
         MockInteractions.blur(input.inputElement);
