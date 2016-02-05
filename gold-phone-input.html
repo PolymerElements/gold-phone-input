@@ -200,6 +200,10 @@ style this element.
      * A handler that is called on input
      */
     _onValueChanged: function(value, oldValue) {
+        if (value == undefined) {
+            value = "";
+        }
+        
        // The initial property assignment is handled by `ready`.
        if (oldValue == undefined)
          return;
