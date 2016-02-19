@@ -132,148 +132,148 @@ style this element.
     </paper-input-container>
   </template>
 
-</dom-module>
+  <script>
+  (function() {
+    Polymer({
 
-<script>
-(function() {
-  Polymer({
+      is: 'gold-phone-input',
 
-    is: 'gold-phone-input',
+      behaviors: [
+        Polymer.PaperInputBehavior,
+        Polymer.IronFormElementBehavior
+      ],
 
-    behaviors: [
-      Polymer.PaperInputBehavior,
-      Polymer.IronFormElementBehavior
-    ],
+      properties: {
+        /**
+         * The label for this input.
+         */
+        label: {
+          type: String,
+          value: 'Phone number'
+        },
 
-    properties: {
+        /*
+         * The country code that should be recognized and parsed.
+         */
+        countryCode: {
+          type: String,
+          value: '1'
+        },
+
+        /*
+         * The format of a valid phone number, including formatting but excluding
+         * the country code. Use 'X' to denote the digits separated by dashes.
+         */
+        phoneNumberPattern: {
+          type: String,
+          value: 'XXX-XXX-XXXX',
+          observer: '_phoneNumberPatternChanged'
+        },
+
+        value: {
+          observer: '_onValueChanged'
+        }
+      },
+
+      observers: [
+        '_onFocusedChanged(focused)'
+      ],
+
+      ready: function() {
+        // If there's an initial input, validate it.
+        if (this.value)
+          this._handleAutoValidate();
+      },
+
+      _phoneNumberPatternChanged: function() {
+        // Transform the pattern into a regex the iron-input understands.
+        var regex = '';
+        regex = this.phoneNumberPattern.replace(/\s/g, '\\s');
+        regex = regex.replace(/X/gi, '\\d');
+        regex = regex.replace(/\+/g, '\\+');
+        this.$.input.pattern = regex;
+      },
+
       /**
-       * The label for this input.
+       * A handler that is called on input
        */
-      label: {
-        type: String,
-        value: 'Phone number'
-      },
+      _onValueChanged: function(value, oldValue) {
+        // The initial property assignment is handled by `ready`.
+        if (oldValue == undefined || value === oldValue)
+          return;
 
-      /*
-       * The country code that should be recognized and parsed.
-       */
-      countryCode: {
-        type: String,
-        value: '1'
-      },
+        //Ensure value is a string
+        value = value ? value.toString() : '';
 
-      /*
-       * The format of a valid phone number, including formatting but excluding
-       * the country code. Use 'X' to denote the digits separated by dashes.
-       */
-      phoneNumberPattern: {
-        type: String,
-        value: 'XXX-XXX-XXXX',
-        observer: '_phoneNumberPatternChanged'
-      },
+        // Keep track of how many dashes the original value has. After
+        // reformatting the value, we might gain or lose some of them, which
+        // means we have to correctly move the caret to account for the difference.
+        var start = this.$.input.selectionStart;
+        var initialDashesBeforeCaret = value.substr(0, start).split('-').length - 1;
 
-      value: {
-        observer: '_onValueChanged'
-      }
-    },
+        // Remove any already-applied formatting.
+        value = value.replace(/-/g, '');
+        var shouldFormat = value.length <= this.phoneNumberPattern.replace(/-/g, '').length;
+        var formattedValue = '';
 
-    observers: [
-      '_onFocusedChanged(focused)'
-    ],
+        // Fill in the dashes according to the specified pattern.
+        var currentDashIndex = 0;
+        var totalDashesAdded = 0;
+        for (var i = 0; i < value.length; i++) {
+          currentDashIndex = this.phoneNumberPattern.indexOf('-', currentDashIndex);
 
-    ready: function() {
-      // If there's an initial input, validate it.
-      if (this.value)
-        this._handleAutoValidate();
-    },
+          // Since we remove any formatting first, we need to account added dashes
+          // when counting the position of new dashes in the pattern.
+          if (shouldFormat && i == (currentDashIndex - totalDashesAdded)) {
+            formattedValue += '-';
+            currentDashIndex++;
+            totalDashesAdded++;
+          }
 
-    _phoneNumberPatternChanged: function() {
-      // Transform the pattern into a regex the iron-input understands.
-      var regex = '';
-      regex = this.phoneNumberPattern.replace(/\s/g, '\\s');
-      regex = regex.replace(/X/gi, '\\d');
-      regex = regex.replace(/\+/g, '\\+');
-      this.$.input.pattern = regex;
-    },
-
-    /**
-     * A handler that is called on input
-     */
-    _onValueChanged: function(value, oldValue) {
-      // The initial property assignment is handled by `ready`.
-      if (oldValue == undefined || value === oldValue)
-        return;
-
-      //Ensure value is a string
-      value = value ? value.toString() : '';
-
-      // Keep track of how many dashes the original value has. After
-      // reformatting the value, we might gain or lose some of them, which
-      // means we have to correctly move the caret to account for the difference.
-      var start = this.$.input.selectionStart;
-      var initialDashesBeforeCaret = value.substr(0, start).split('-').length - 1;
-
-      // Remove any already-applied formatting.
-      value = value.replace(/-/g, '');
-      var shouldFormat = value.length <= this.phoneNumberPattern.replace(/-/g, '').length;
-      var formattedValue = '';
-
-      // Fill in the dashes according to the specified pattern.
-      var currentDashIndex = 0;
-      var totalDashesAdded = 0;
-      for (var i = 0; i < value.length; i++) {
-        currentDashIndex = this.phoneNumberPattern.indexOf('-', currentDashIndex);
-
-        // Since we remove any formatting first, we need to account added dashes
-        // when counting the position of new dashes in the pattern.
-        if (shouldFormat && i == (currentDashIndex - totalDashesAdded)) {
-          formattedValue += '-';
-          currentDashIndex++;
-          totalDashesAdded++;
+          formattedValue += value[i];
         }
 
-        formattedValue += value[i];
-      }
+        var updatedDashesBeforeCaret = formattedValue.substr(0, start).split('-').length - 1;
+        var dashesDifference = updatedDashesBeforeCaret - initialDashesBeforeCaret;
 
-      var updatedDashesBeforeCaret = formattedValue.substr(0, start).split('-').length - 1;
-      var dashesDifference = updatedDashesBeforeCaret - initialDashesBeforeCaret;
+        // Note: this will call _onValueChanged again, which will move the
+        // cursor to the end of the value. Correctly adjust the caret afterwards.
+        this.updateValueAndPreserveCaret(formattedValue.trim());
 
-      // Note: this will call _onValueChanged again, which will move the
-      // cursor to the end of the value. Correctly adjust the caret afterwards.
-      this.updateValueAndPreserveCaret(formattedValue.trim());
+        // Advance or back up the caret based on the change that happened before it.
+        this.$.input.selectionStart = this.$.input.selectionEnd = start + dashesDifference;
 
-      // Advance or back up the caret based on the change that happened before it.
-      this.$.input.selectionStart = this.$.input.selectionEnd = start + dashesDifference;
-      
-      this._handleAutoValidate();
-    },
-
-    /**
-     * Overidden from Polymer.PaperInputBehavior.
-     */
-    validate: function() {
-      // Update the container and its addons (i.e. the custom error-message).
-      var valid = this.$.input.validate()
-      this.$.container.invalid = !valid;
-      this.$.container.updateAddons({
-        inputElement: this.$.input,
-        value: this.value,
-        invalid: !valid
-      });
-
-      return valid;
-    },
-
-    /**
-     * Overidden from Polymer.IronControlState.
-     */
-    _onFocusedChanged: function(focused) {
-      if (!focused) {
         this._handleAutoValidate();
+      },
+
+      /**
+       * Overidden from Polymer.PaperInputBehavior.
+       */
+      validate: function() {
+        // Update the container and its addons (i.e. the custom error-message).
+        var valid = this.$.input.validate()
+        this.$.container.invalid = !valid;
+        this.$.container.updateAddons({
+          inputElement: this.$.input,
+          value: this.value,
+          invalid: !valid
+        });
+
+        return valid;
+      },
+
+      /**
+       * Overidden from Polymer.IronControlState.
+       */
+      _onFocusedChanged: function(focused) {
+        if (!focused) {
+          this._handleAutoValidate();
+        }
       }
-    }
-  })
+    })
 
-})();
+  })();
 
-</script>
+  </script>
+
+</dom-module>
