@@ -87,6 +87,10 @@ style this element.
     left: 40px !important;
   }
 
+  .label-no-country-code {
+    left: 0 !important;
+  }
+
   input {
     @apply(--layout-flex);
   }
@@ -103,8 +107,9 @@ style this element.
       <label hidden$="[[!label]]">[[label]]</label>
 
       <div class="container">
+        <template is="dom-if" if="{{!noCountryCode}}">
          <span class="country-code">+[[countryCode]]</span>
-
+        </template>
         <input is="iron-input" id="input"
           aria-labelledby$="[[_ariaLabelledBy]]"
           aria-describedby$="[[_ariaDescribedBy]]"
@@ -163,6 +168,14 @@ style this element.
       },
 
       /*
+       * Set this to true to disable the country code
+       */
+      noCountryCode: {
+        type: Boolean,
+        value: false
+      },
+
+      /*
        * The format of a valid phone number, including formatting but excluding
        * the country code. Use 'X' to denote the digits separated by dashes.
        */
@@ -186,6 +199,19 @@ style this element.
       // If there's an initial input, validate it.
       if (this.value)
         this._handleAutoValidate();
+      
+      if(this.noCountryCode) {
+        this.set('countryCode', '');
+      }
+    },
+
+    attached: function() {
+      
+      if(this.noCountryCode) {
+        this.set('countryCode', '');
+        Polymer.dom(this).node.querySelector('label').classList.add('label-no-country-code');
+      }
+      
     },
 
     _phoneNumberPatternChanged: function() {
