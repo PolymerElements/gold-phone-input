@@ -217,9 +217,13 @@ style this element.
       // Transform the pattern into a regex the iron-input understands.
       var regex = '';
       regex = this.phoneNumberPattern.replace(/\s/g, '\\s');
+      regex = regex.replace(/\(/gi, '\\(');
+      regex = regex.replace(/\)/gi, '\\)');
       regex = regex.replace(/X/gi, '\\d');
       regex = regex.replace(/\+/g, '\\+');
       this.$.input.pattern = regex;
+      
+      this.regex = regex;
     },
 
     /**
