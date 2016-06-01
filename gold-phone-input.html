@@ -29,10 +29,10 @@ It may include an optional label, which by default is "Phone number".
 ### Validation
 
 By default, the phone number is considered to be a US phone number, and
-will be validated according to the pattern `XXX-XXX-XXXX`, where `X` is a
-digit, and `-` is the separating dash. If you want to customize the input
+will be validated according to the pattern <span style="white-space: nowrap;">`(XXX) XXX-XXXX`</span>, where `X` is a
+digit, and `-` is the separating dash. Formatting also supports single spaces. If you want to customize the input
 for a different area code or number pattern, use the `country-code` and
-`phone-number-pattern` attributes
+`phone-number-pattern` attributes.
 
     <gold-phone-input
         country-code="33"
@@ -65,7 +65,7 @@ style this element.
       :host {
         display: block;
       }
-
+      
       /* TODO: This should be a dropdown */
       span {
         @apply(--paper-font-subhead);
@@ -84,7 +84,7 @@ style this element.
       .container {
         @apply(--layout-horizontal);
       }
-
+      
       /* TODO(notwaldorf): The style applied by paper-input-container is more
        * specific, and we need the important to override it. This will go away
        * once we can refactor this element to use the paper-input suffix */
@@ -176,7 +176,7 @@ style this element.
        */
       phoneNumberPattern: {
         type: String,
-        value: 'XXX-XXX-XXXX',
+        value: '(XXX) XXX-XXXX',
         observer: '_phoneNumberPatternChanged'
       },
 
@@ -228,6 +228,7 @@ style this element.
 
       // The initial property assignment is handled by `ready`.
       if (oldValue == undefined || value == undefined) {
+        this.value = '';
         return;
       }
       
@@ -259,7 +260,13 @@ style this element.
       if(value === oldValue) {
         return;
       }
-
+      
+      if(value.length > 10) {
+        this.updateValueAndPreserveCaret(value.trim());
+        this._handleAutoValidate();
+        return;
+      }
+      
       // Fill in the dashes according to the specified pattern.
       var leftParenIndex = this.phoneNumberPattern.indexOf('(');
       var leftParenAdded = false;
