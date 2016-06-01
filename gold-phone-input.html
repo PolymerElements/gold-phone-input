@@ -29,7 +29,7 @@ It may include an optional label, which by default is "Phone number".
 ### Validation
 
 By default, the phone number is considered to be a US phone number, and
-will be validated according to the pattern <span style="white-space: nowrap;">`(XXX) XXX-XXXX`</span>, where `X` is a
+will be validated according to the pattern <span style="white-space: nowrap;">`XXX-XXX-XXXX`</span>, where `X` is a
 digit, and `-` is the separating dash. Formatting also supports single spaces. If you want to customize the input
 for a different area code or number pattern, use the `country-code` and
 `phone-number-pattern` attributes.
@@ -65,26 +65,26 @@ style this element.
       :host {
         display: block;
       }
-      
+
       /* TODO: This should be a dropdown */
       span {
         @apply(--paper-font-subhead);
         @apply(--paper-input-container-input);
         width: 40px;
       }
-      
+
       .country-code {
         @apply(--gold-phone-input-country-code);
       }
-      
+
       .label-no-country-code {
         left: 0 !important;
       }
-      
+
       .container {
         @apply(--layout-horizontal);
       }
-      
+
       /* TODO(notwaldorf): The style applied by paper-input-container is more
        * specific, and we need the important to override it. This will go away
        * once we can refactor this element to use the paper-input suffix */
@@ -176,7 +176,7 @@ style this element.
        */
       phoneNumberPattern: {
         type: String,
-        value: '(XXX) XXX-XXXX',
+        value: 'XXX-XXX-XXXX',
         observer: '_phoneNumberPatternChanged'
       },
 
@@ -198,14 +198,14 @@ style this element.
     },
 
     attached: function() {
-      
+
       if(this.noCountryCode) {
         this.set('countryCode', '');
         Polymer.dom(this).node.querySelector('label').classList.add('label-no-country-code');
       }
-      
+
       this.set('maxlength', this.phoneNumberPattern.length);
-      
+
     },
 
     _phoneNumberPatternChanged: function() {
@@ -217,7 +217,7 @@ style this element.
       regex = regex.replace(/X/gi, '\\d');
       regex = regex.replace(/\+/g, '\\+');
       this.$.input.pattern = regex;
-      
+
       this.regex = regex;
     },
 
@@ -231,9 +231,9 @@ style this element.
         this.value = '';
         return;
       }
-      
+
       value = value ? value.toString() : '';
-      
+
       // Keep track of how many dashes the original value has. After
       // reformatting the value, we might gain or lose some of them, which
       // means we have to correctly move the caret to account for the difference.
@@ -260,13 +260,13 @@ style this element.
       if(value === oldValue) {
         return;
       }
-      
+
       if(value.length > 10) {
         this.updateValueAndPreserveCaret(value.trim());
         this._handleAutoValidate();
         return;
       }
-      
+
       // Fill in the dashes according to the specified pattern.
       var leftParenIndex = this.phoneNumberPattern.indexOf('(');
       var leftParenAdded = false;
