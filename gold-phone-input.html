@@ -29,7 +29,7 @@ It may include an optional label, which by default is "Phone number".
 ### Validation
 
 By default, the phone number is considered to be a US phone number, and
-will be validated according to the pattern <span style="white-space: nowrap;">`XXX-XXX-XXXX`</span>, where `X` is a
+will be validated according to the pattern `XXX-XXX-XXXX`, where `X` is a
 digit, and `-` is the separating dash. Formatting also supports single spaces. If you want to customize the input
 for a different area code or number pattern, use the `country-code` and
 `phone-number-pattern` attributes.
@@ -105,9 +105,9 @@ style this element.
       <label hidden$="[[!label]]">[[label]]</label>
 
       <div class="container">
-        <template is="dom-if" if="{{!noCountryCode}}">
-          <span class="country-code">+[[countryCode]]</span>
-        </template>
+        
+        <span hidden="[[noCountryCode]]" class="country-code">+[[countryCode]]</span>
+        
         <input is="iron-input" id="input"
           aria-labelledby$="[[_ariaLabelledBy]]"
           aria-describedby$="[[_ariaDescribedBy]]"
