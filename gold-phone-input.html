@@ -30,9 +30,9 @@ It may include an optional label, which by default is "Phone number".
 
 By default, the phone number is considered to be a US phone number, and
 will be validated according to the pattern `XXX-XXX-XXXX`, where `X` is a
-digit, and `-` is the separating dash. If you want to customize the input
+digit, and `-` is the separating dash. Formatting also supports single spaces. If you want to customize the input
 for a different area code or number pattern, use the `country-code` and
-`phone-number-pattern` attributes
+`phone-number-pattern` attributes.
 
     <gold-phone-input
         country-code="33"
@@ -77,6 +77,10 @@ style this element.
         @apply(--gold-phone-input-country-code);
       }
 
+      .label-no-country-code {
+        left: 0 !important;
+      }
+
       .container {
         @apply(--layout-horizontal);
       }
@@ -101,15 +105,16 @@ style this element.
       <label hidden$="[[!label]]">[[label]]</label>
 
       <div class="container">
-         <span class="country-code">+[[countryCode]]</span>
-
+        
+        <span hidden$="[[noCountryCode]]" class="country-code">+[[countryCode]]</span>
+        
         <input is="iron-input" id="input"
           aria-labelledby$="[[_ariaLabelledBy]]"
           aria-describedby$="[[_ariaDescribedBy]]"
           required$="[[required]]"
           bind-value="{{value}}"
           name$="[[name]]"
-          allowed-pattern="[0-9\-]"
+          allowed-pattern="[()\s0-9\-]"
           autocomplete="tel"
           type="tel"
           prevent-invalid-input
@@ -158,6 +163,14 @@ style this element.
       },
 
       /*
+       * Set this to true to disable the country code
+       */
+      noCountryCode: {
+        type: Boolean,
+        value: false
+      },
+
+      /*
        * The format of a valid phone number, including formatting but excluding
        * the country code. Use 'X' to denote the digits separated by dashes.
        */
@@ -181,51 +194,122 @@ style this element.
       // If there's an initial input, validate it.
       if (this.value)
         this._handleAutoValidate();
+      
+    },
+
+    attached: function() {
+
+      if(this.noCountryCode) {
+        this.set('countryCode', '');
+        Polymer.dom(this).node.querySelector('label').classList.add('label-no-country-code');
+      }
+
+      this.set('maxlength', this.phoneNumberPattern.length);
+
     },
 
     _phoneNumberPatternChanged: function() {
       // Transform the pattern into a regex the iron-input understands.
       var regex = '';
       regex = this.phoneNumberPattern.replace(/\s/g, '\\s');
+      regex = regex.replace(/\(/gi, '\\(');
+      regex = regex.replace(/\)/gi, '\\)');
       regex = regex.replace(/X/gi, '\\d');
       regex = regex.replace(/\+/g, '\\+');
       this.$.input.pattern = regex;
+
+      this.regex = regex;
     },
 
     /**
      * A handler that is called on input
      */
     _onValueChanged: function(value, oldValue) {
-      // The initial property assignment is handled by `ready`.
-      if (oldValue == undefined || value === oldValue)
-        return;
 
-      //Ensure value is a string
+      // The initial property assignment is handled by `ready`.
+      if (oldValue == undefined || value == undefined) {
+        this.value = '';
+        return;
+      }
+
       value = value ? value.toString() : '';
 
       // Keep track of how many dashes the original value has. After
       // reformatting the value, we might gain or lose some of them, which
       // means we have to correctly move the caret to account for the difference.
       var start = this.$.input.selectionStart;
+
       var initialDashesBeforeCaret = value.substr(0, start).split('-').length - 1;
+      var initialSpacesBeforeCaret = value.substr(0, start).split(' ').length - 1;
+      var initialLeftParenBeforeCaret = value.substr(0, start).split('(').length - 1;
+      var initialRightParenBeforeCaret = value.substr(0, start).split(')').length - 1;
+
+      var formattedValue = '';
 
       // Remove any already-applied formatting.
       value = value.replace(/-/g, '');
-      var shouldFormat = value.length <= this.phoneNumberPattern.replace(/-/g, '').length;
-      var formattedValue = '';
+      value = value.replace(/\(/g, '');
+      value = value.replace(/\)/g, '');
+      value = value.replace(/\s/g, '');
+
+      oldValue = oldValue.replace(/-/g, '');
+      oldValue = oldValue.replace(/\(/g, '');
+      oldValue = oldValue.replace(/\)/g, '');
+      oldValue = oldValue.replace(/\s/g, '');
+
+      if(value === oldValue) {
+        return;
+      }
+
+      if(value.length > 10) {
+        this.updateValueAndPreserveCaret(value.trim());
+        this._handleAutoValidate();
+        return;
+      }
 
       // Fill in the dashes according to the specified pattern.
+      var leftParenIndex = this.phoneNumberPattern.indexOf('(');
+      var leftParenAdded = false;
+
+      var rightParenIndex = this.phoneNumberPattern.indexOf(')') - 1;
+      var rightParenAdded = false;
+
+      var currentSpaceIndex = 0;
       var currentDashIndex = 0;
-      var totalDashesAdded = 0;
+
+      var totalCharactersAdded = 0;
+
       for (var i = 0; i < value.length; i++) {
+
         currentDashIndex = this.phoneNumberPattern.indexOf('-', currentDashIndex);
 
-        // Since we remove any formatting first, we need to account added dashes
+        currentSpaceIndex = this.phoneNumberPattern.indexOf(' ', currentSpaceIndex);
+
+        // Since we remove any formatting first, we need to account added dashes, etc.
         // when counting the position of new dashes in the pattern.
-        if (shouldFormat && i == (currentDashIndex - totalDashesAdded)) {
+
+        if (i == leftParenIndex) {
+          formattedValue += '(';
+          leftParenAdded = true;
+          totalCharactersAdded++;
+        }
+
+        if (i == rightParenIndex) {
+          formattedValue += ')';
+          rightParenAdded = true;
+          totalCharactersAdded++;
+        }
+
+        if (i == (currentSpaceIndex - totalCharactersAdded)) {
+          formattedValue += ' ';
+          currentSpaceIndex++;
+          totalCharactersAdded++;
+        }
+
+        if (i == (currentDashIndex - totalCharactersAdded)) {
           formattedValue += '-';
           currentDashIndex++;
-          totalDashesAdded++;
+          totalCharactersAdded++;
         }
 
         formattedValue += value[i];
@@ -234,12 +318,21 @@ style this element.
       var updatedDashesBeforeCaret = formattedValue.substr(0, start).split('-').length - 1;
       var dashesDifference = updatedDashesBeforeCaret - initialDashesBeforeCaret;
 
+      var updatedSpacesBeforeCaret = formattedValue.substr(0, start+1).split(' ').length - 1;
+      var spacesDifference = updatedSpacesBeforeCaret - initialSpacesBeforeCaret;
+
+      var updatedLeftParenBeforeCaret = formattedValue.substr(0, start).split('(').length - 1;
+      var leftParenDifference = updatedLeftParenBeforeCaret - initialLeftParenBeforeCaret;
+
+      var updatedRightParenBeforeCaret = formattedValue.substr(0, start).split(')').length - 1;
+      var rightParenDifference = updatedRightParenBeforeCaret - initialRightParenBeforeCaret;
+
       // Note: this will call _onValueChanged again, which will move the
       // cursor to the end of the value. Correctly adjust the caret afterwards.
       this.updateValueAndPreserveCaret(formattedValue.trim());
 
       // Advance or back up the caret based on the change that happened before it.
-      this.$.input.selectionStart = this.$.input.selectionEnd = start + dashesDifference;
+      this.$.input.selectionStart = this.$.input.selectionEnd = start + spacesDifference + dashesDifference + leftParenDifference + rightParenDifference;
 
       this._handleAutoValidate();
     },

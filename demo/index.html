@@ -46,5 +46,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="vertical-section">
       <gold-phone-input auto-validate label="Cats only" error-message="needs more cats" required></gold-phone-input>
     </div>
+
+    <h4>No country code, parentheses US format</h4>
+    <div class="vertical-section">
+      <gold-phone-input 
+          no-country-code
+          phone-number-pattern="(XXX) XXX-XXXX"
+          label="No country code"
+          class="form-element">
+      </gold-phone-input>
+    </div>
   </div>
 </body>

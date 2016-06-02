@@ -41,6 +41,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
   </test-fixture>
 
+  <test-fixture id="parensFormat">
+    <template>
+      <gold-phone-input
+        phone-number-pattern="(XXX) XXX-XXXX"
+      ></gold-phone-input>
+    </template>
+  </test-fixture>
+
   <script>
 
     suite('basic', function() {
@@ -101,6 +109,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         assert.notEqual(getComputedStyle(error).visibility, 'hidden', 'error is not visibility:hidden');
         assert.isTrue(container.invalid);
       });
+
+      test('input format respects parentheses and spaces', function() {
+        var input = fixture('parensFormat');
+        input.value ='1231112222';
+        assert.equal(input.value, '(123) 111-2222');
+      });
+
     });
 
     suite('a11y', function() {
