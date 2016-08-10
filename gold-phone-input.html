@@ -157,6 +157,16 @@ style this element.
       value: {
         type: String,
         observer: '_onValueChanged'
+      },
+
+      /**
+       * International format of the input value.
+       *
+       * @type {String}
+       */
+      internationalValue: {
+        type: String,
+        computed: '_computeInternationalValue(countryCode, value)'
       }
     },
 
@@ -254,6 +264,16 @@ style this element.
       if (!focused) {
         this._handleAutoValidate();
       }
+    },
+
+    /**
+     * Returns the phone number value prefixed by the country code or simply
+     * the value if the country code is not set. When	`value` equals
+     * "3-44-55-66-77" and the `countryCode` is "33", the `internationalValue`
+     * equals "+(33)3-44-55-66-77"
+     */
+    _computeInternationalValue: function(countryCode, value) {
+      return countryCode ? '+(' + countryCode + ')' + value : value;
     }
   });
 
