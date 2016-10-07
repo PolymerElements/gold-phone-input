@@ -35,6 +35,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
   </test-fixture>
 
+  <test-fixture id="autoformat">
+    <template>
+      <gold-phone-input value="333333333"></gold-phone-input>
+    </template>
+  </test-fixture>
+
   <test-fixture id="required">
     <template>
       <gold-phone-input auto-validate required error-message="error"></gold-phone-input>
@@ -266,6 +272,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // The cursor goes back by the one character you deleted, but gains two dashes.
         assert.equal(ironInput.selectionStart, caret + 1, 'selectionStart is preserved');
         assert.equal(ironInput.selectionEnd, caret + 1, 'selectionEnd is preserved');
+      });
+    });
+
+    suite('autoformat', function() {
+      test('input is correctly formated', function() {
+        var input = fixture('autoformat');
+        assert.equal(input.value, '333-333-333');
       });
     });
 
