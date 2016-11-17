@@ -176,8 +176,10 @@ style this element.
 
     ready: function() {
       // If there's an initial input, validate it.
-      if (this.value)
+      if (this.value) {
+        this._format(this.value);
         this._handleAutoValidate();
+      }
     },
 
     _phoneNumberPatternChanged: function() {
@@ -200,6 +202,11 @@ style this element.
       //Ensure value is a string
       value = value ? value.toString() : '';
 
+      this._format(value);
+      this._handleAutoValidate();
+    },
+
+    _format: function(value) {
       // Keep track of how many dashes the original value has. After
       // reformatting the value, we might gain or lose some of them, which
       // means we have to correctly move the caret to account for the difference.
@@ -237,8 +244,6 @@ style this element.
 
       // Advance or back up the caret based on the change that happened before it.
       this.$.input.selectionStart = this.$.input.selectionEnd = start + dashesDifference;
-
-      this._handleAutoValidate();
     },
 
     /**
