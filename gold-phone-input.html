@@ -194,7 +194,7 @@ style this element.
      */
     _onValueChanged: function(value, oldValue) {
       // The initial property assignment is handled by `ready`.
-      if (oldValue == undefined || value === oldValue)
+      if (value == null || oldValue == undefined || value === oldValue)
         return;
 
       //Ensure value is a string
