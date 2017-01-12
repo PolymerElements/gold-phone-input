@@ -208,7 +208,6 @@ style this element.
 
       // Remove any already-applied formatting.
       value = value.replace(/-/g, '');
-      var shouldFormat = value.length <= this.phoneNumberPattern.replace(/-/g, '').length;
       var formattedValue = '';
 
       // Fill in the dashes according to the specified pattern.
@@ -219,7 +218,7 @@ style this element.
 
         // Since we remove any formatting first, we need to account added dashes
         // when counting the position of new dashes in the pattern.
-        if (shouldFormat && i == (currentDashIndex - totalDashesAdded)) {
+        if (i == (currentDashIndex - totalDashesAdded)) {
           formattedValue += '-';
           currentDashIndex++;
           totalDashesAdded++;
