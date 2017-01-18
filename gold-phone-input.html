@@ -98,7 +98,7 @@ style this element.
         bind-value="{{value}}"
         name$="[[name]]"
         allowed-pattern="[0-9\-]"
-        autocomplete="tel"
+        autocomplete="{{autocomplete}}"
         type="tel"
         prevent-invalid-input
         disabled$="[[disabled]]"
@@ -134,6 +134,11 @@ style this element.
       label: {
         type: String,
         value: 'Phone number'
+      },
+        
+      autocomplete: {
+        type: String,
+        value: 'tel'
       },
 
       /*
@@ -194,7 +199,7 @@ style this element.
      */
     _onValueChanged: function(value, oldValue) {
       // The initial property assignment is handled by `ready`.
-      if (oldValue == undefined || value === oldValue)
+      if (value == null || oldValue == undefined || value === oldValue)
         return;
 
       //Ensure value is a string
