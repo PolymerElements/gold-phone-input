@@ -167,6 +167,7 @@ style this element.
           autocomplete="tel"
           maxlength="[[maxlength]]"
           name="[[name]]"
+          prevent-invalid-input
           value="{{value}}"
           disabled="[[disabled]]"
           autofocus="[[autofocus]]"
@@ -174,6 +175,60 @@ style this element.
           placeholder="[[placeholder]]"
           readonly="[[readonly]]"
           size="[[size]]">
+    </iron-input>
+      <span id="template-placeholder"></span>
+
+      <template is="dom-if" if="[[errorMessage]]">
+        <paper-input-error slot="add-on" id="error">
+          [[errorMessage]]
+        </paper-input-error>
+      </template>
+
+    </paper-input-container>
+  </template>
+
+  <template id="v0">
+    <input is="iron-input" id="input" slot="input"
+          aria-labelledby$="[[_ariaLabelledBy]]"
+          aria-describedby$="[[_ariaDescribedBy]]"
+          required$="[[required]]"
+          bind-value="{{value}}"
+          name$="[[name]]"
+          allowed-pattern="[0-9\-]"
+          autocomplete="tel"
+          type="tel"
+          disabled$="[[disabled]]"
+          invalid="{{invalid}}"
+          autofocus$="[[autofocus]]"
+          inputmode$="[[inputmode]]"
+          placeholder$="[[placeholder]]"
+          readonly$="[[readonly]]"
+          maxlength$="[[maxlength]]"
+          size$="[[size]]">
+  </template>
+
+  <template id="v1">
+    <iron-input id="input" slot="input"
+        allowed-pattern="[0-9\-]"
+        bind-value$="{{value}}"
+        disabled$="[[disabled]]"
+        invalid$="{{invalid}}"
+        maxlength$="[[maxlength]]">
+      <input id="nativeInput"
+          aria-labelledby$="[[_ariaLabelledBy]]"
+          aria-describedby$="[[_ariaDescribedBy]]"
+          invalid$="{{invalid}}"
+          required$="[[required]]"
+          type="tel"
+          prevent-invalid-input
+          autocomplete$="tel"
+          maxlength$="[[maxlength]]"
+          name$="[[name]]"
+          autofocus$="[[autofocus]]"
+          inputmode$="[[inputmode]]"
+          placeholder$="[[placeholder]]"
+          readonly$="[[readonly]]"
+          size$="[[size]]">
     </iron-input>
   </template>
 
@@ -216,8 +271,7 @@ style this element.
 
       value: {
         type: String,
-        observer: '_onValueChanged',
-        value: '',
+        observer: '_onValueChanged'
       },
 
       /**
@@ -234,12 +288,6 @@ style this element.
     observers: [
       '_onFocusedChanged(focused)',
     ],
-
-    ready: function() {
-      // If there's an initial input, validate it.
-      if (this.value)
-        this._handleAutoValidate();
-    },
 
     // TODO: remove this when 2.0 adds beforeRegister back to legacy
     registered: function() {
@@ -274,7 +322,11 @@ style this element.
     _onIronInputReady: function() {
       // Only validate when attached if the input already has a value.
       if (!!this.inputElement.bindValue) {
-        this.$.container._handleValueAndAutoValidate(this.inputElement);
+        this._handleAutoValidate();
+      // Assign an empty string value if no value so if it becomes time
+      // to validate it is not undefined.
+      } else {
+        this.value = '';
       }
     },
 
@@ -349,7 +401,7 @@ style this element.
      */
     validate: function() {
       // Update the container and its addons (i.e. the custom error-message).
-      var valid = this.$.input.validate()
+      var valid = this.$.input.validate();
 
       this.$.container.invalid = !valid;
       this.$.container.updateAddons({
