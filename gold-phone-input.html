@@ -135,100 +135,44 @@ style this element.
 
   <template id="v0">
     <input is="iron-input" id="input" slot="input"
-          aria-labelledby$="[[_ariaLabelledBy]]"
-          aria-describedby$="[[_ariaDescribedBy]]"
-          required$="[[required]]"
-          bind-value="{{value}}"
-          name$="[[name]]"
-          allowed-pattern="[0-9\-]"
-          autocomplete="tel"
-          type="tel"
-          disabled$="[[disabled]]"
-          invalid="{{invalid}}"
-          autofocus$="[[autofocus]]"
-          inputmode$="[[inputmode]]"
-          placeholder$="[[placeholder]]"
-          readonly$="[[readonly]]"
-          maxlength$="[[maxlength]]"
-          size$="[[size]]">
+        aria-labelledby$="[[_ariaLabelledBy]]"
+        aria-describedby$="[[_ariaDescribedBy]]"
+        required$="[[required]]"
+        bind-value="{{value}}"
+        name$="[[name]]"
+        allowed-pattern="[0-9\-]"
+        autocomplete="tel"
+        type="tel"
+        prevent-invalid-input
+        disabled$="[[disabled]]"
+        invalid="{{invalid}}"
+        autofocus$="[[autofocus]]"
+        inputmode$="[[inputmode]]"
+        placeholder$="[[placeholder]]"
+        readonly$="[[readonly]]"
+        maxlength$="[[maxlength]]"
+        size$="[[size]]">
   </template>
+
   <template id="v1">
     <iron-input id="input" slot="input"
         bind-value$="{{value}}"
-        invalid$="{{invalid}}"
         allowed-pattern="[0-9\-]"
-        maxlength$="[[maxlength]]">
+        invalid$="{{invalid}}">
       <input id="nativeInput"
           aria-labelledby$="[[_ariaLabelledBy]]"
           aria-describedby$="[[_ariaDescribedBy]]"
-          invalid="{{invalid}}"
           required="[[required]]"
-          type="tel"
-          autocomplete="tel"
-          maxlength="[[maxlength]]"
           name="[[name]]"
-          prevent-invalid-input
-          value="{{value}}"
+          autocomplete="tel"
+          type="tel"
           disabled="[[disabled]]"
           autofocus="[[autofocus]]"
           inputmode="[[inputmode]]"
           placeholder="[[placeholder]]"
           readonly="[[readonly]]"
+          maxlength="[[maxlength]]"
           size="[[size]]">
-    </iron-input>
-      <span id="template-placeholder"></span>
-
-      <template is="dom-if" if="[[errorMessage]]">
-        <paper-input-error slot="add-on" id="error">
-          [[errorMessage]]
-        </paper-input-error>
-      </template>
-
-    </paper-input-container>
-  </template>
-
-  <template id="v0">
-    <input is="iron-input" id="input" slot="input"
-          aria-labelledby$="[[_ariaLabelledBy]]"
-          aria-describedby$="[[_ariaDescribedBy]]"
-          required$="[[required]]"
-          bind-value="{{value}}"
-          name$="[[name]]"
-          allowed-pattern="[0-9\-]"
-          autocomplete="tel"
-          type="tel"
-          disabled$="[[disabled]]"
-          invalid="{{invalid}}"
-          autofocus$="[[autofocus]]"
-          inputmode$="[[inputmode]]"
-          placeholder$="[[placeholder]]"
-          readonly$="[[readonly]]"
-          maxlength$="[[maxlength]]"
-          size$="[[size]]">
-  </template>
-
-  <template id="v1">
-    <iron-input id="input" slot="input"
-        allowed-pattern="[0-9\-]"
-        bind-value$="{{value}}"
-        disabled$="[[disabled]]"
-        invalid$="{{invalid}}"
-        maxlength$="[[maxlength]]">
-      <input id="nativeInput"
-          aria-labelledby$="[[_ariaLabelledBy]]"
-          aria-describedby$="[[_ariaDescribedBy]]"
-          invalid$="{{invalid}}"
-          required$="[[required]]"
-          type="tel"
-          prevent-invalid-input
-          autocomplete$="tel"
-          maxlength$="[[maxlength]]"
-          name$="[[name]]"
-          autofocus$="[[autofocus]]"
-          inputmode$="[[inputmode]]"
-          placeholder$="[[placeholder]]"
-          readonly$="[[readonly]]"
-          size$="[[size]]">
     </iron-input>
   </template>
 
@@ -243,6 +187,7 @@ style this element.
     ],
 
     properties: {
+
       /**
        * The label for this input.
        */
@@ -282,29 +227,23 @@ style this element.
       internationalValue: {
         type: String,
         computed: '_computeInternationalValue(countryCode, value)'
-      },
+      }
     },
 
     observers: [
-      '_onFocusedChanged(focused)',
+      '_onFocusedChanged(focused)'
     ],
 
-    // TODO: remove this when 2.0 adds beforeRegister back to legacy
-    registered: function() {
-      if (Polymer.Element) {
-        this._beforeRegister();
-      }
-    },
     beforeRegister: function() {
-      this._beforeRegister();
-    },
-    _beforeRegister: function() {
       var template = Polymer.DomModule.import('gold-phone-input', 'template');
       var version = Polymer.Element ? 'v1' : 'v0';
       var inputTemplate = Polymer.DomModule.import('gold-phone-input', 'template#' + version);
       var inputPlaceholder = template.content.querySelector('#template-placeholder');
-      inputPlaceholder.parentNode.replaceChild(inputTemplate.content, inputPlaceholder);
+      if (inputPlaceholder) {
+        inputPlaceholder.parentNode.replaceChild(inputTemplate.content, inputPlaceholder);
+      }
     },
+
     /**
     * Returns a reference to the focusable element. Overridden from PaperInputBehavior
     * to correctly focus the native input.
@@ -313,8 +252,8 @@ style this element.
       return Polymer.Element ? this.inputElement._inputElement : this.inputElement;
     },
 
-    // Note: This event is only available in the 1.0 version of this element.
-    // In 2.0, the functionality of `_onIronInputReady` is done in
+    // Note: This event is only available in the 2.0 version of this element.
+    // In 1.0, the functionality of `_onIronInputReady` is done in
     // PaperInputBehavior::attached.
     listeners: {
       'iron-input-ready': '_onIronInputReady'
