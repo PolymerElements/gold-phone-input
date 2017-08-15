@@ -243,6 +243,7 @@ style this element.
     ],
 
     properties: {
+
       /**
        * The label for this input.
        */
@@ -282,11 +283,11 @@ style this element.
       internationalValue: {
         type: String,
         computed: '_computeInternationalValue(countryCode, value)'
-      },
+      }
     },
 
     observers: [
-      '_onFocusedChanged(focused)',
+      '_onFocusedChanged(focused)'
     ],
 
     // TODO: remove this when 2.0 adds beforeRegister back to legacy
@@ -296,15 +297,13 @@ style this element.
       }
     },
     beforeRegister: function() {
-      this._beforeRegister();
-    },
-    _beforeRegister: function() {
       var template = Polymer.DomModule.import('gold-phone-input', 'template');
       var version = Polymer.Element ? 'v1' : 'v0';
       var inputTemplate = Polymer.DomModule.import('gold-phone-input', 'template#' + version);
       var inputPlaceholder = template.content.querySelector('#template-placeholder');
       inputPlaceholder.parentNode.replaceChild(inputTemplate.content, inputPlaceholder);
     },
+
     /**
     * Returns a reference to the focusable element. Overridden from PaperInputBehavior
     * to correctly focus the native input.
