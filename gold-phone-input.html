@@ -234,18 +234,14 @@ style this element.
       '_onFocusedChanged(focused)'
     ],
 
-    // TODO: remove this when 2.0 adds beforeRegister back to legacy
-    registered: function() {
-      if (Polymer.Element) {
-        this._beforeRegister();
-      }
-    },
     beforeRegister: function() {
       var template = Polymer.DomModule.import('gold-phone-input', 'template');
       var version = Polymer.Element ? 'v1' : 'v0';
       var inputTemplate = Polymer.DomModule.import('gold-phone-input', 'template#' + version);
       var inputPlaceholder = template.content.querySelector('#template-placeholder');
-      inputPlaceholder.parentNode.replaceChild(inputTemplate.content, inputPlaceholder);
+      if (inputPlaceholder) {
+        inputPlaceholder.parentNode.replaceChild(inputTemplate.content, inputPlaceholder);
+      }
     },
 
     /**
@@ -256,8 +252,8 @@ style this element.
       return Polymer.Element ? this.inputElement._inputElement : this.inputElement;
     },
 
-    // Note: This event is only available in the 1.0 version of this element.
-    // In 2.0, the functionality of `_onIronInputReady` is done in
+    // Note: This event is only available in the 2.0 version of this element.
+    // In 1.0, the functionality of `_onIronInputReady` is done in
     // PaperInputBehavior::attached.
     listeners: {
       'iron-input-ready': '_onIronInputReady'
