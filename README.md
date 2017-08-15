@@ -13,11 +13,9 @@ thing! https://github.com/PolymerLabs/tedium/issues
 -->
 
 [![Build status](https://travis-ci.org/PolymerElements/gold-phone-input.svg?branch=master)](https://travis-ci.org/PolymerElements/gold-phone-input)
+[![Demo and API Docs](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/PolymerElements/gold-phone-input)
 
-_[Demo and API docs](https://elements.polymer-project.org/elements/gold-phone-input)_
-
-
-##&lt;gold-phone-input&gt;
+## &lt;gold-phone-input&gt;
 
 `<gold-phone-input>` is a single-line text field with Material Design styling
 for entering a phone number.
