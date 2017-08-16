@@ -68,17 +68,48 @@ style this element.
 
       /* TODO: This should be a dropdown */
       span {
-        @apply(--paper-font-subhead);
-        @apply(--paper-input-container-input);
+        @apply --paper-font-subhead;
+        @apply --paper-input-container-input;
       }
 
       .country-code {
         width: 40px;
-        @apply(--gold-phone-input-country-code);
+        @apply --gold-phone-input-country-code;
       }
 
       input {
-        @apply(--layout-flex);
+        @apply --layout-flex;
+      }
+      input
+      {
+        position: relative; /* to make a stacking context */
+        outline: none;
+        box-shadow: none;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        background: transparent;
+        border: none;
+        color: var(--paper-input-container-input-color, var(--primary-text-color));
+        -webkit-appearance: none;
+        text-align: inherit;
+        vertical-align: bottom;
+        /* Firefox sets a min-width on the input, which can cause layout issues */
+        min-width: 0;
+        @apply --paper-font-subhead;
+        @apply --paper-input-container-input;
+      }
+      input::-webkit-input-placeholder {
+        color: var(--paper-input-container-color, var(--secondary-text-color));
+      }
+      input:-moz-placeholder {
+        color: var(--paper-input-container-color, var(--secondary-text-color));
+      }
+      input::-moz-placeholder {
+        color: var(--paper-input-container-color, var(--secondary-text-color));
+      }
+      input:-ms-input-placeholder {
+        color: var(--paper-input-container-color, var(--secondary-text-color));
       }
     </style>
     <paper-input-container id="container"
@@ -87,11 +118,23 @@ style this element.
         always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]"
         invalid="[[invalid]]">
 
-      <label hidden$="[[!label]]">[[label]]</label>
+      <label slot="label" hidden$="[[!label]]">[[label]]</label>
 
-      <span prefix class="country-code">+[[countryCode]]</span>
+      <span slot="prefix" prefix class="country-code">+[[countryCode]]</span>
 
-      <input is="iron-input" id="input"
+      <span id="template-placeholder"></span>
+
+      <template is="dom-if" if="[[errorMessage]]">
+        <paper-input-error slot="add-on" id="error">
+          [[errorMessage]]
+        </paper-input-error>
+      </template>
+
+    </paper-input-container>
+  </template>
+
+  <template id="v0">
+    <input is="iron-input" id="input" slot="input"
         aria-labelledby$="[[_ariaLabelledBy]]"
         aria-describedby$="[[_ariaDescribedBy]]"
         required$="[[required]]"
@@ -109,12 +152,28 @@ style this element.
         readonly$="[[readonly]]"
         maxlength$="[[maxlength]]"
         size$="[[size]]">
+  </template>
 
-      <template is="dom-if" if="[[errorMessage]]">
-        <paper-input-error id="error">[[errorMessage]]</paper-input-error>
-      </template>
-
-    </paper-input-container>
+  <template id="v1">
+    <iron-input id="input" slot="input"
+        bind-value$="{{value}}"
+        allowed-pattern="[0-9\-]"
+        invalid$="{{invalid}}">
+      <input id="nativeInput"
+          aria-labelledby$="[[_ariaLabelledBy]]"
+          aria-describedby$="[[_ariaDescribedBy]]"
+          required="[[required]]"
+          name="[[name]]"
+          autocomplete="tel"
+          type="tel"
+          disabled="[[disabled]]"
+          autofocus="[[autofocus]]"
+          inputmode="[[inputmode]]"
+          placeholder="[[placeholder]]"
+          readonly="[[readonly]]"
+          maxlength="[[maxlength]]"
+          size="[[size]]">
+    </iron-input>
   </template>
 
   <script>
@@ -128,6 +187,7 @@ style this element.
     ],
 
     properties: {
+
       /**
        * The label for this input.
        */
@@ -174,10 +234,46 @@ style this element.
       '_onFocusedChanged(focused)'
     ],
 
+    beforeRegister: function() {
+      var template = Polymer.DomModule.import('gold-phone-input', 'template');
+      var version = Polymer.Element ? 'v1' : 'v0';
+      var inputTemplate = Polymer.DomModule.import('gold-phone-input', 'template#' + version);
+      var inputPlaceholder = template.content.querySelector('#template-placeholder');
+      if (inputPlaceholder) {
+        inputPlaceholder.parentNode.replaceChild(inputTemplate.content, inputPlaceholder);
+      }
+    },
+
+    /**
+    * Returns a reference to the focusable element. Overridden from PaperInputBehavior
+    * to correctly focus the native input.
+    */
+    get _focusableElement() {
+      return Polymer.Element ? this.inputElement._inputElement : this.inputElement;
+    },
+
+    // Note: This event is only available in the 2.0 version of this element.
+    // In 1.0, the functionality of `_onIronInputReady` is done in
+    // PaperInputBehavior::attached.
+    listeners: {
+      'iron-input-ready': '_onIronInputReady'
+    },
+
     ready: function() {
-      // If there's an initial input, validate it.
-      if (this.value)
+      if (this.value && !Polymer.Element) {
+          this._handleAutoValidate();
+      }
+    },
+
+    _onIronInputReady: function() {
+      // Only validate when attached if the input already has a value.
+      if (!!this.inputElement.bindValue) {
         this._handleAutoValidate();
+      // Assign an empty string value if no value so if it becomes time
+      // to validate it is not undefined.
+      } else {
+        this.value = '';
+      }
     },
 
     _phoneNumberPatternChanged: function() {
@@ -186,7 +282,11 @@ style this element.
       regex = this.phoneNumberPattern.replace(/\s/g, '\\s');
       regex = regex.replace(/X/gi, '\\d');
       regex = regex.replace(/\+/g, '\\+');
-      this.$.input.pattern = regex;
+      if (this.$.nativeInput) {
+        this.$.nativeInput.pattern = regex;
+      } else {
+        this.$.input.pattern = regex;
+      }
     },
 
     /**
@@ -236,7 +336,8 @@ style this element.
       this.updateValueAndPreserveCaret(formattedValue.trim());
 
       // Advance or back up the caret based on the change that happened before it.
-      this.$.input.selectionStart = this.$.input.selectionEnd = start + dashesDifference;
+      this.$.input.selectionStart =
+          this.$.input.selectionEnd = start + dashesDifference;
 
       this._handleAutoValidate();
     },
@@ -246,7 +347,8 @@ style this element.
      */
     validate: function() {
       // Update the container and its addons (i.e. the custom error-message).
-      var valid = this.$.input.validate()
+      var valid = this.$.input.validate();
+
       this.$.container.invalid = !valid;
       this.$.container.updateAddons({
         inputElement: this.$.input,
