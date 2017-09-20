@@ -256,7 +256,8 @@ style this element.
     // In 1.0, the functionality of `_onIronInputReady` is done in
     // PaperInputBehavior::attached.
     listeners: {
-      'iron-input-ready': '_onIronInputReady'
+      'iron-input-ready': '_onIronInputReady',
+      'bind-value-changed': '_onBindValueChanged'
     },
 
     ready: function() {
@@ -274,6 +275,10 @@ style this element.
       } else {
         this.value = '';
       }
+    },
+
+    _onBindValueChanged: function() {
+      this.value = this.bindValue = this.inputElement.value;
     },
 
     _phoneNumberPatternChanged: function() {
