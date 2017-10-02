@@ -156,23 +156,23 @@ style this element.
 
   <template id="v1">
     <iron-input id="input" slot="input"
-        bind-value$="{{value}}"
+        bind-value="{{value}}"
         allowed-pattern="[0-9\-]"
-        invalid$="{{invalid}}">
+        invalid="{{invalid}}">
       <input id="nativeInput"
           aria-labelledby$="[[_ariaLabelledBy]]"
           aria-describedby$="[[_ariaDescribedBy]]"
-          required="[[required]]"
-          name="[[name]]"
+          required$="[[required]]"
+          name$="[[name]]"
           autocomplete="tel"
           type="tel"
-          disabled="[[disabled]]"
-          autofocus="[[autofocus]]"
-          inputmode="[[inputmode]]"
-          placeholder="[[placeholder]]"
-          readonly="[[readonly]]"
-          maxlength="[[maxlength]]"
-          size="[[size]]">
+          disabled$="[[disabled]]"
+          autofocus$="[[autofocus]]"
+          inputmode$="[[inputmode]]"
+          placeholder$="[[placeholder]]"
+          readonly$="[[readonly]]"
+          maxlength$="[[maxlength]]"
+          size$="[[size]]">
     </iron-input>
   </template>
 
