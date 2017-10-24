@@ -236,7 +236,8 @@ style this element.
 
     beforeRegister: function() {
       var template = Polymer.DomModule.import('gold-phone-input', 'template');
-      var version = Polymer.Element ? 'v1' : 'v0';
+      var ironInput = document.createElement('iron-input');
+      var version = typeof ironInput._initSlottedInput == 'function' ? 'v1' : 'v0';
       var inputTemplate = Polymer.DomModule.import('gold-phone-input', 'template#' + version);
       var inputPlaceholder = template.content.querySelector('#template-placeholder');
       if (inputPlaceholder) {
@@ -261,7 +262,7 @@ style this element.
     },
 
     ready: function() {
-      if (this.value && !Polymer.Element) {
+      if (this.value && !Polymer['Element']) {
           this._handleAutoValidate();
       }
     },
