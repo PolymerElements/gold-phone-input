@@ -305,6 +305,7 @@ style this element.
 
       //Ensure value is a string
       value = value ? value.toString() : '';
+      value = value.replace("+" + this.countryCode, "");
 
       // Keep track of how many dashes the original value has. After
       // reformatting the value, we might gain or lose some of them, which
