@@ -1,19 +1,48 @@
 {
-  "name": "@polymer/gold-phone-input",
-  "private": true,
   "description": "A validating input for a phone number",
+  "keywords": [
+    "web-components",
+    "polymer",
+    "gold",
+    "input"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/PolymerElements/gold-phone-input.git"
   },
+  "homepage": "https://github.com/PolymerElements/gold-phone-input",
+  "name": "@polymer/gold-phone-input",
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@polymer/gen-typescript-declarations": "^1.2.2",
     "bower": "^1.8.0",
-    "webmat": "^0.2.0"
+    "webmat": "^0.2.0",
+    "@polymer/iron-component-page": "^3.0.0-pre.20",
+    "@polymer/iron-test-helpers": "^3.0.0-pre.20",
+    "@polymer/test-fixture": "^3.0.0-pre.20",
+    "wct-browser-legacy": "^1.0.1",
+    "@webcomponents/webcomponentsjs": "^2.0.0"
   },
   "scripts": {
     "update-types": "bower install && gen-typescript-declarations --deleteExisting --outDir .",
     "format": "webmat && npm run update-types"
+  },
+  "version": "3.0.0-pre.20",
+  "resolutions": {
+    "inherits": "2.0.3",
+    "samsam": "1.1.3",
+    "supports-color": "3.1.2",
+    "type-detect": "1.0.0",
+    "@webcomponents/webcomponentsjs": "2.0.0-beta.2"
+  },
+  "main": "gold-phone-input.js",
+  "author": "The Polymer Authors",
+  "dependencies": {
+    "@polymer/iron-flex-layout": "^3.0.0-pre.20",
+    "@polymer/iron-form-element-behavior": "^3.0.0-pre.20",
+    "@polymer/iron-input": "^3.0.0-pre.20",
+    "@polymer/paper-input": "^3.0.0-pre.20",
+    "@polymer/paper-styles": "^3.0.0-pre.20",
+    "@polymer/polymer": "^3.0.0"
   }
 }

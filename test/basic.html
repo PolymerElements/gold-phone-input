@@ -17,14 +17,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
 
-  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../../wct-browser-legacy/browser.js"></script>
 
-  <script src="../../iron-test-helpers/test-helpers.js"></script>
-  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js" type="module"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js" type="module"></script>
 
-  <link rel="import" href="../gold-phone-input.html">
+  <script type="module" src="../gold-phone-input.js"></script>
 
 </head>
 <body>
@@ -41,345 +41,349 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
   </test-fixture>
 
-  <script>
-    function getIronInput(paperInput) {
-      return paperInput.inputElement;
-    }
-    function getNativeInput(paperInput) {
-      return Polymer.Element ? paperInput.inputElement.inputElement :
-                               paperInput.inputElement;
-    }
-    suite('basic', function() {
-      test('input is spaced out correctly', function(done) {
+  <script type="module">
+import '../gold-phone-input.js';
+import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { Base } from '@polymer/polymer/polymer-legacy.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+function getIronInput(paperInput) {
+  return paperInput.inputElement;
+}
+function getNativeInput(paperInput) {
+  return PolymerElement ? paperInput.inputElement.inputElement :
+                           paperInput.inputElement;
+}
+suite('basic', function() {
+  test('input is spaced out correctly', function(done) {
+    var input = fixture('basic');
+
+    Base.async(function() {
+      input.value = '1234';
+      input.value = '1231112222';
+      assert.equal(input.value, '123-111-2222');
+      done();
+    }, 1);
+  });
+
+  test(
+      'setting the value to undefined resets it to the empty string',
+      function(done) {
         var input = fixture('basic');
 
-        Polymer.Base.async(function() {
-          input.value = '1234';
-          input.value = '1231112222';
-          assert.equal(input.value, '123-111-2222');
+        Base.async(function() {
+          input.value = undefined;
+          assert.equal(input.value, '');
           done();
         }, 1);
       });
 
-      test(
-          'setting the value to undefined resets it to the empty string',
-          function(done) {
-            var input = fixture('basic');
+  test('invalid input is not ok', function(done) {
+    var input = fixture('required');
 
-            Polymer.Base.async(function() {
-              input.value = undefined;
-              assert.equal(input.value, '');
-              done();
-            }, 1);
-          });
+    Base.async(function() {
+      input.value = '1234';
+      forceXIfStamp(input);
 
-      test('invalid input is not ok', function(done) {
-        var input = fixture('required');
+      var container =
+          dom(input.root).querySelector('paper-input-container');
+      assert.ok(container, 'paper-input-container exists');
+      assert.isTrue(container.invalid);
 
-        Polymer.Base.async(function() {
-          input.value = '1234';
-          forceXIfStamp(input);
+      var error = dom(input.root).querySelector('paper-input-error');
+      assert.ok(error, 'paper-input-error exists');
+      assert.notEqual(
+          getComputedStyle(error).visibility,
+          'hidden',
+          'error is not visibility:hidden');
+      done();
+    }, 1);
+  });
 
-          var container =
-              Polymer.dom(input.root).querySelector('paper-input-container');
-          assert.ok(container, 'paper-input-container exists');
-          assert.isTrue(container.invalid);
+  test('valid input is ok', function(done) {
+    var input = fixture('required');
 
-          var error = Polymer.dom(input.root).querySelector('paper-input-error');
-          assert.ok(error, 'paper-input-error exists');
-          assert.notEqual(
-              getComputedStyle(error).visibility,
-              'hidden',
-              'error is not visibility:hidden');
-          done();
-        }, 1);
-      });
+    Base.async(function() {
+      input.value = '1231112222';
+      forceXIfStamp(input);
 
-      test('valid input is ok', function(done) {
-        var input = fixture('required');
+      var container =
+          dom(input.root).querySelector('paper-input-container');
+      assert.ok(container, 'paper-input-container exists');
+      assert.isFalse(container.invalid);
 
-        Polymer.Base.async(function() {
-          input.value = '1231112222';
-          forceXIfStamp(input);
+      var error = dom(input.root).querySelector('paper-input-error');
+      assert.ok(error, 'paper-input-error exists');
+      assert.equal(
+          getComputedStyle(error).visibility,
+          'hidden',
+          'error is visibility:hidden');
+      done();
+    }, 1);
+  });
 
-          var container =
-              Polymer.dom(input.root).querySelector('paper-input-container');
-          assert.ok(container, 'paper-input-container exists');
-          assert.isFalse(container.invalid);
+  test('empty required input shows error on blur', function(done) {
+    var input = fixture('required');
+    Base.async(function() {
+      forceXIfStamp(input);
 
-          var error = Polymer.dom(input.root).querySelector('paper-input-error');
-          assert.ok(error, 'paper-input-error exists');
-          assert.equal(
-              getComputedStyle(error).visibility,
-              'hidden',
-              'error is visibility:hidden');
-          done();
-        }, 1);
-      });
+      var container =
+          dom(input.root).querySelector('paper-input-container');
+      var error = dom(input.root).querySelector('paper-input-error');
+      assert.ok(error, 'paper-input-error exists');
+      assert.equal(
+          getComputedStyle(error).visibility,
+          'hidden',
+          'error is visibility:hidden');
+      assert.isFalse(container.invalid);
 
-      test('empty required input shows error on blur', function(done) {
-        var input = fixture('required');
-        Polymer.Base.async(function() {
-          forceXIfStamp(input);
+      MockInteractions.focus(input);
+      MockInteractions.blur(input);
 
-          var container =
-              Polymer.dom(input.root).querySelector('paper-input-container');
-          var error = Polymer.dom(input.root).querySelector('paper-input-error');
-          assert.ok(error, 'paper-input-error exists');
-          assert.equal(
-              getComputedStyle(error).visibility,
-              'hidden',
-              'error is visibility:hidden');
-          assert.isFalse(container.invalid);
+      assert(!input.focused, 'input is blurred');
+      assert.notEqual(
+          getComputedStyle(error).visibility,
+          'hidden',
+          'error is not visibility:hidden');
+      assert.isTrue(container.invalid);
+      done();
+    }, 1);
+  });
 
-          MockInteractions.focus(input);
-          MockInteractions.blur(input);
+  test('international value properly computed', function(done) {
+    var input = fixture('basic');
+    Base.async(function() {
+      input.countryCode = '33';
+      input.phoneNumberPattern = 'X-XX-XX-XX-XX';
+      input.value = '123456789';
+      assert.equal(input.internationalValue, '+(33)1-23-45-67-89');
+      done();
+    }, 1);
+  });
 
-          assert(!input.focused, 'input is blurred');
-          assert.notEqual(
-              getComputedStyle(error).visibility,
-              'hidden',
-              'error is not visibility:hidden');
-          assert.isTrue(container.invalid);
-          done();
-        }, 1);
-      });
+  test('international value is read only', function(done) {
+    var input = fixture('basic');
+    Base.async(function() {
+      input.countryCode = '33';
+      input.phoneNumberPattern = 'X-XX-XX-XX-XX';
+      input.value = '123456789';
+      input.internationalValue = '+(32)2-345-67-89';
+      assert.equal(input.internationalValue, '+(33)1-23-45-67-89');
+      done();
+    }, 1);
+  });
 
-      test('international value properly computed', function(done) {
-        var input = fixture('basic');
-        Polymer.Base.async(function() {
-          input.countryCode = '33';
-          input.phoneNumberPattern = 'X-XX-XX-XX-XX';
-          input.value = '123456789';
-          assert.equal(input.internationalValue, '+(33)1-23-45-67-89');
-          done();
-        }, 1);
-      });
+  test('gets the value without country code if it is not set', function(done) {
+    var input = fixture('basic');
+    Base.async(function() {
+      input.countryCode = '';
+      input.phoneNumberPattern = 'X-XX-XX-XX-XX';
+      input.value = '123456789';
+      assert.equal(input.internationalValue, '1-23-45-67-89');
+      done();
+    }, 1);
+  });
+});
 
-      test('international value is read only', function(done) {
-        var input = fixture('basic');
-        Polymer.Base.async(function() {
-          input.countryCode = '33';
-          input.phoneNumberPattern = 'X-XX-XX-XX-XX';
-          input.value = '123456789';
-          input.internationalValue = '+(32)2-345-67-89';
-          assert.equal(input.internationalValue, '+(33)1-23-45-67-89');
-          done();
-        }, 1);
-      });
+suite('a11y', function() {
+  test('has aria-labelledby', function(done) {
+    var input = fixture('basic');
+    Base.async(function() {
+      var nativeInput = getNativeInput(input);
+      assert.isTrue(nativeInput.hasAttribute('aria-labelledby'))
+      assert.equal(
+          nativeInput.getAttribute('aria-labelledby'),
+          dom(input.root).querySelector('label').id,
+          'aria-labelledby points to the label');
+      done();
+    }, 1);
+  });
 
-      test('gets the value without country code if it is not set', function(done) {
-        var input = fixture('basic');
-        Polymer.Base.async(function() {
-          input.countryCode = '';
-          input.phoneNumberPattern = 'X-XX-XX-XX-XX';
-          input.value = '123456789';
-          assert.equal(input.internationalValue, '1-23-45-67-89');
-          done();
-        }, 1);
-      });
-    });
+  test('required and error has aria-labelledby', function(done) {
+    var input = fixture('required');
+    Base.async(function() {
+      var nativeInput = getNativeInput(input);
+      assert.isTrue(nativeInput.hasAttribute('aria-labelledby'))
+      assert.equal(
+          nativeInput.getAttribute('aria-labelledby'),
+          dom(input.root).querySelector('label').id,
+          'aria-labelledby points to the label');
+      done();
+    }, 1);
+  });
+});
 
-    suite('a11y', function() {
-      test('has aria-labelledby', function(done) {
-        var input = fixture('basic');
-        Polymer.Base.async(function() {
-          var nativeInput = getNativeInput(input);
-          assert.isTrue(nativeInput.hasAttribute('aria-labelledby'))
-          assert.equal(
-              nativeInput.getAttribute('aria-labelledby'),
-              Polymer.dom(input.root).querySelector('label').id,
-              'aria-labelledby points to the label');
-          done();
-        }, 1);
-      });
+suite('caret position is preserved', function() {
+  var input, ironInput;
 
-      test('required and error has aria-labelledby', function(done) {
-        var input = fixture('required');
-        Polymer.Base.async(function() {
-          var nativeInput = getNativeInput(input);
-          assert.isTrue(nativeInput.hasAttribute('aria-labelledby'))
-          assert.equal(
-              nativeInput.getAttribute('aria-labelledby'),
-              Polymer.dom(input.root).querySelector('label').id,
-              'aria-labelledby points to the label');
-          done();
-        }, 1);
-      });
-    });
+  function pretendToTypeACharacter(input, text, caret) {
+    ironInput = getIronInput(input);
+    // When typing a character in an input, the browser natively advances
+    // the caret from its original location.
+    ironInput.value = text;
+    ironInput.selectionStart = ironInput.selectionEnd = caret + 1;
 
-    suite('caret position is preserved', function() {
-      var input, ironInput;
+    // Since imperatively setting the input value does not fire an event.
+    // The user typing the value would, so manually fire the update.
+    input.value = text;
+  }
 
-      function pretendToTypeACharacter(input, text, caret) {
-        ironInput = getIronInput(input);
-        // When typing a character in an input, the browser natively advances
-        // the caret from its original location.
-        ironInput.value = text;
-        ironInput.selectionStart = ironInput.selectionEnd = caret + 1;
+  function pretendToDeleteACharacter(input, text, caret) {
+    ironInput = getIronInput(input);
+    // When typing a character in an input, the browser natively moves back
+    // the caret from its original location.
+    ironInput.value = text;
+    ironInput.selectionStart = ironInput.selectionEnd = caret - 1;
 
-        // Since imperatively setting the input value does not fire an event.
-        // The user typing the value would, so manually fire the update.
-        input.value = text;
-      }
+    // Since imperatively setting the input value does not fire an event.
+    // The user typing the value would, so manually fire the update.
+    input.value = text;
+  }
 
-      function pretendToDeleteACharacter(input, text, caret) {
-        ironInput = getIronInput(input);
-        // When typing a character in an input, the browser natively moves back
-        // the caret from its original location.
-        ironInput.value = text;
-        ironInput.selectionStart = ironInput.selectionEnd = caret - 1;
+  setup(function() {
+    input = fixture('basic');
+    ironInput = getIronInput(input);
+  });
 
-        // Since imperatively setting the input value does not fire an event.
-        // The user typing the value would, so manually fire the update.
-        input.value = text;
-      }
+  test('001-0: adding a character after the 1', function(done) {
+    Base.async(function() {
+      input.value = '001-0';
+      var caret = 3;
+      pretendToTypeACharacter(input, '0012-0', caret);
+      assert.equal(input.value, '001-20');
 
-      setup(function() {
-        input = fixture('basic');
-        ironInput = getIronInput(input);
-      });
+      // The cursor advaces by the one character you typed, and the one dash.
+      assert.equal(
+          ironInput.selectionStart, caret + 2, 'selectionStart is preserved');
+      assert.equal(
+          ironInput.selectionEnd, caret + 2, 'selectionEnd is preserved');
+      done();
+    }, 1);
+  });
 
-      test('001-0: adding a character after the 1', function(done) {
-        Polymer.Base.async(function() {
-          input.value = '001-0';
-          var caret = 3;
-          pretendToTypeACharacter(input, '0012-0', caret);
-          assert.equal(input.value, '001-20');
+  test('000-1: adding a character after the 1', function(done) {
+    Base.async(function() {
+      input.value = '000-1';
 
-          // The cursor advaces by the one character you typed, and the one dash.
-          assert.equal(
-              ironInput.selectionStart, caret + 2, 'selectionStart is preserved');
-          assert.equal(
-              ironInput.selectionEnd, caret + 2, 'selectionEnd is preserved');
-          done();
-        }, 1);
-      });
+      var caret = 5;
+      pretendToTypeACharacter(input, '000-12', caret);
+      assert.equal(input.value, '000-12');
 
-      test('000-1: adding a character after the 1', function(done) {
-        Polymer.Base.async(function() {
-          input.value = '000-1';
+      // The cursor just advances by the one character you typed.
+      assert.equal(
+          ironInput.selectionStart, caret + 1, 'selectionStart is preserved');
+      assert.equal(
+          ironInput.selectionEnd, caret + 1, 'selectionEnd is preserved');
+      done();
+    }, 1);
+  });
 
-          var caret = 5;
-          pretendToTypeACharacter(input, '000-12', caret);
-          assert.equal(input.value, '000-12');
+  test('000-001: adding a character after the 1', function(done) {
+    Base.async(function() {
+      input.value = '000-001';
 
-          // The cursor just advances by the one character you typed.
-          assert.equal(
-              ironInput.selectionStart, caret + 1, 'selectionStart is preserved');
-          assert.equal(
-              ironInput.selectionEnd, caret + 1, 'selectionEnd is preserved');
-          done();
-        }, 1);
-      });
+      var caret = 7;
+      pretendToTypeACharacter(input, '000-0012', caret);
+      assert.equal(input.value, '000-001-2');
 
-      test('000-001: adding a character after the 1', function(done) {
-        Polymer.Base.async(function() {
-          input.value = '000-001';
+      // The cursor advaces by the one character you typed, and the one new
+      // dash.
+      assert.equal(
+          ironInput.selectionStart, caret + 2, 'selectionStart is preserved');
+      assert.equal(
+          ironInput.selectionEnd, caret + 2, 'selectionEnd is preserved');
+      done();
+    }, 1);
+  });
 
-          var caret = 7;
-          pretendToTypeACharacter(input, '000-0012', caret);
-          assert.equal(input.value, '000-001-2');
+  test('000-000-0001: adding a character after the 1', function(done) {
+    Base.async(function() {
+      input.value = '000-000-0001';
 
-          // The cursor advaces by the one character you typed, and the one new
-          // dash.
-          assert.equal(
-              ironInput.selectionStart, caret + 2, 'selectionStart is preserved');
-          assert.equal(
-              ironInput.selectionEnd, caret + 2, 'selectionEnd is preserved');
-          done();
-        }, 1);
-      });
+      var caret = 12;
+      pretendToTypeACharacter(input, '000-000-00012', caret);
+      assert.equal(input.value, '00000000012');
 
-      test('000-000-0001: adding a character after the 1', function(done) {
-        Polymer.Base.async(function() {
-          input.value = '000-000-0001';
+      // The cursor advaces by the one character you typed, but you lose 2
+      // dashes
+      assert.equal(
+          ironInput.selectionStart, caret - 1, 'selectionStart is preserved');
+      assert.equal(
+          ironInput.selectionEnd, caret - 1, 'selectionEnd is preserved');
+      done();
+    }, 1);
+  });
 
-          var caret = 12;
-          pretendToTypeACharacter(input, '000-000-00012', caret);
-          assert.equal(input.value, '00000000012');
+  test('001-20: removing the 2', function(done) {
+    Base.async(function() {
+      input.value = '001-20';
 
-          // The cursor advaces by the one character you typed, but you lose 2
-          // dashes
-          assert.equal(
-              ironInput.selectionStart, caret - 1, 'selectionStart is preserved');
-          assert.equal(
-              ironInput.selectionEnd, caret - 1, 'selectionEnd is preserved');
-          done();
-        }, 1);
-      });
+      var caret = 5;
+      pretendToDeleteACharacter(input, '001-0', caret);
+      assert.equal(input.value, '001-0');
 
-      test('001-20: removing the 2', function(done) {
-        Polymer.Base.async(function() {
-          input.value = '001-20';
+      // The cursor goes back by the one character you deleted.
+      assert.equal(
+          ironInput.selectionStart, caret - 1, 'selectionStart is preserved');
+      assert.equal(
+          ironInput.selectionEnd, caret - 1, 'selectionEnd is preserved');
+      done();
+    }, 1);
+  });
 
-          var caret = 5;
-          pretendToDeleteACharacter(input, '001-0', caret);
-          assert.equal(input.value, '001-0');
+  test('000-12: removing the 2', function(done) {
+    Base.async(function() {
+      input.value = '000-12';
 
-          // The cursor goes back by the one character you deleted.
-          assert.equal(
-              ironInput.selectionStart, caret - 1, 'selectionStart is preserved');
-          assert.equal(
-              ironInput.selectionEnd, caret - 1, 'selectionEnd is preserved');
-          done();
-        }, 1);
-      });
+      var caret = 5;
+      pretendToDeleteACharacter(input, '000-1', caret);
+      assert.equal(input.value, '000-1');
 
-      test('000-12: removing the 2', function(done) {
-        Polymer.Base.async(function() {
-          input.value = '000-12';
+      // The cursor goes back by the one character you deleted.
+      assert.equal(
+          ironInput.selectionStart, caret - 1, 'selectionStart is preserved');
+      assert.equal(
+          ironInput.selectionEnd, caret - 1, 'selectionEnd is preserved');
+      done();
+    }, 1);
+  });
 
-          var caret = 5;
-          pretendToDeleteACharacter(input, '000-1', caret);
-          assert.equal(input.value, '000-1');
+  test('000-001-2: removing the 2', function(done) {
+    Base.async(function() {
+      input.value = '000-001-2';
 
-          // The cursor goes back by the one character you deleted.
-          assert.equal(
-              ironInput.selectionStart, caret - 1, 'selectionStart is preserved');
-          assert.equal(
-              ironInput.selectionEnd, caret - 1, 'selectionEnd is preserved');
-          done();
-        }, 1);
-      });
+      var caret = 9;
+      pretendToDeleteACharacter(input, '000-001-', caret);
+      assert.equal(input.value, '000-001');
 
-      test('000-001-2: removing the 2', function(done) {
-        Polymer.Base.async(function() {
-          input.value = '000-001-2';
+      // The cursor goes back by the one character you deleted, and the one
+      // dash.
+      assert.equal(
+          ironInput.selectionStart, caret - 2, 'selectionStart is preserved');
+      assert.equal(
+          ironInput.selectionEnd, caret - 2, 'selectionEnd is preserved');
+      done();
+    }, 1);
+  });
 
-          var caret = 9;
-          pretendToDeleteACharacter(input, '000-001-', caret);
-          assert.equal(input.value, '000-001');
+  test('00000000012: removing the 2', function(done) {
+    Base.async(function() {
+      input.value = '00000000012';
 
-          // The cursor goes back by the one character you deleted, and the one
-          // dash.
-          assert.equal(
-              ironInput.selectionStart, caret - 2, 'selectionStart is preserved');
-          assert.equal(
-              ironInput.selectionEnd, caret - 2, 'selectionEnd is preserved');
-          done();
-        }, 1);
-      });
+      var caret = 11;
+      pretendToDeleteACharacter(input, '0000000001', caret);
+      assert.equal(input.value, '000-000-0001');
 
-      test('00000000012: removing the 2', function(done) {
-        Polymer.Base.async(function() {
-          input.value = '00000000012';
-
-          var caret = 11;
-          pretendToDeleteACharacter(input, '0000000001', caret);
-          assert.equal(input.value, '000-000-0001');
-
-          // The cursor goes back by the one character you deleted, but gains two
-          // dashes.
-          assert.equal(
-              ironInput.selectionStart, caret + 1, 'selectionStart is preserved');
-          assert.equal(
-              ironInput.selectionEnd, caret + 1, 'selectionEnd is preserved');
-          done();
-        }, 1);
-      });
-    });
-  </script>
+      // The cursor goes back by the one character you deleted, but gains two
+      // dashes.
+      assert.equal(
+          ironInput.selectionStart, caret + 1, 'selectionStart is preserved');
+      assert.equal(
+          ironInput.selectionEnd, caret + 1, 'selectionEnd is preserved');
+      done();
+    }, 1);
+  });
+});
+</script>
 
 </body>
 </html>
