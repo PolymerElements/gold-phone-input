@@ -1,62 +1,81 @@
-
-<!---
-
-This README is automatically generated from the comments in these files:
-gold-phone-input.html
-
-Edit those files, and our readme bot will duplicate them over here!
-Edit this file, and the bot will squash your changes :)
-
-The bot does some handling of markdown. Please file a bug if it does the wrong
-thing! https://github.com/PolymerLabs/tedium/issues
-
--->
-
+[![Published on NPM](https://img.shields.io/npm/v/@polymer/gold-phone-input.svg)](https://www.npmjs.com/package/@polymer/gold-phone-input)
 [![Build status](https://travis-ci.org/PolymerElements/gold-phone-input.svg?branch=master)](https://travis-ci.org/PolymerElements/gold-phone-input)
-[![Demo and API Docs](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/PolymerElements/gold-phone-input)
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://webcomponents.org/element/@polymer/gold-phone-input)
 
 ## &lt;gold-phone-input&gt;
-
 `<gold-phone-input>` is a single-line text field with Material Design styling
 for entering a phone number.
 
-```html
-<gold-phone-input></gold-phone-input>
+See: [Documentation](https://www.webcomponents.org/element/@polymer/gold-phone-input),
+  [Demo](https://www.webcomponents.org/element/@polymer/gold-phone-input/demo/demo/index.html).
+
+## Usage
+
+### Installation
+```
+npm install --save @polymer/gold-phone-input
 ```
 
-It may include an optional label, which by default is "Phone number".
-
+### In an html file
 ```html
-<gold-phone-input label="call this"></gold-phone-input>
+<html>
+  <head>
+    <script type="module">
+      import '@polymer/gold-phone-input/gold-phone-input.js';
+    </script>
+  </head>
+  <body>
+    <gold-phone-input
+        label="France phone number"
+        country-code="33"
+        phone-number-pattern="X-XX-XX-XX-XX"
+        auto-validate>
+    </gold-phone-input>
+  </body>
+</html>
 ```
 
-### Validation
+### In a Polymer 3 element
+```js
+import {PolymerElement, html} from '@polymer/polymer';
+import '@polymer/gold-phone-input/gold-phone-input.js';
 
-By default, the phone number is considered to be a US phone number, and
-will be validated according to the pattern `XXX-XXX-XXXX`, where `X` is a
-digit, and `-` is the separating dash. If you want to customize the input
-for a different area code or number pattern, use the `country-code` and
-`phone-number-pattern` attributes
-
-```html
-<gold-phone-input
-    country-code="33"
-    phone-number-pattern="X-XX-XX-XX-XX">
-</gold-phone-input>
+class SampleElement extends PolymerElement {
+  static get template() {
+    return html`
+      <gold-phone-input
+          label="France phone number"
+          country-code="33"
+          phone-number-pattern="X-XX-XX-XX-XX"
+          auto-validate>
+      </gold-phone-input>
+    `;
+  }
+}
+customElements.define('sample-element', SampleElement);
 ```
 
-The input can be automatically validated as the user is typing by using
-the `auto-validate` and `required` attributes. For manual validation, the
-element also has a `validate()` method, which returns the validity of the
-input as well sets any appropriate error messages and styles.
+## Contributing
+If you want to send a PR to this element, here are
+the instructions for running the tests and demo locally:
 
-See `Polymer.PaperInputBehavior` for more API docs.
+### Installation
+```sh
+git clone https://github.com/PolymerElements/gold-phone-input
+cd gold-phone-input
+npm install
+npm install -g polymer-cli
+```
 
-### Styling
+### Running the demo locally
+```sh
+polymer serve --npm
+open http://127.0.0.1:<port>/demo/
+```
 
-See `Polymer.PaperInputContainer` for a list of custom properties used to
-style this element.
-
-`--gold-phone-input-country-code` | Mixin applied to the country code span
+### Running the tests
+```sh
+polymer test --npm
+```
 
 
