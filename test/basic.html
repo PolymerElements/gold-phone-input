@@ -116,7 +116,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       test('empty required input shows error on blur', function(done) {
         var input = fixture('required');
         Base.async(function() {
-
           var container = dom(input.root).querySelector('paper-input-container');
           var error = dom(input.root).querySelector('paper-input-error');
           assert.ok(error, 'paper-input-error exists');
