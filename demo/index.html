@@ -17,16 +17,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <title>gold-phone-input demo</title>
 
-  <script src="../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
-  <script type="module" src="../gold-phone-input.js"></script>
-  <script type="module" src="../../paper-styles/demo-pages.js"></script>
+  <script src="https://unpkg.com/@webcomponents/webcomponentsjs@^2.0.0/webcomponents-loader.js"></script>
+  <script type="module">
+    import '@polymer/paper-styles/demo-pages.js';
+    import '../gold-phone-input.js';
+  </script>
 </head>
 <body unresolved>
   <div class="vertical-section-container centered">
     <h4>Standard</h4>
     <div class="vertical-section">
       <gold-phone-input></gold-phone-input>
-      <gold-phone-input auto-validate required label="Auto-validating"></gold-phone-input>
+      <gold-phone-input
+          auto-validate
+          required
+          label="Auto-validating">
+      </gold-phone-input>
       <gold-phone-input
           label="France phone number"
           country-code="33"
@@ -37,14 +43,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <h4>Pre-validated</h4>
     <div class="vertical-section">
-      <gold-phone-input country-code="44" auto-validate required></gold-phone-input>
-      <gold-phone-input label="Valid US number" value="415-111-1111" auto-validate></gold-phone-input>
-      <gold-phone-input label="Invalid US number" value="415-111-111" auto-validate></gold-phone-input>
+      <gold-phone-input
+          country-code="44"
+          auto-validate
+          required></gold-phone-input>
+      <gold-phone-input
+          label="Valid US number"
+          value="415-111-1111"
+          auto-validate>
+      </gold-phone-input>
+      <gold-phone-input
+          label="Invalid US number"
+          value="415-111-111"
+          auto-validate>
+      </gold-phone-input>
     </div>
 
     <h4>Custom error message, auto-validates on blur</h4>
     <div class="vertical-section">
-      <gold-phone-input auto-validate label="Cats only" error-message="needs more cats" required></gold-phone-input>
+      <gold-phone-input
+          auto-validate
+          label="Phone numbers only"
+          error-message="needs more phone number!"
+          required>
+      </gold-phone-input>
     </div>
   </div>
 </body>
