@@ -1,12 +1,25 @@
 /**
 @license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+This code may only be used under the BSD style license found at
+http://polymer.github.io/LICENSE.txt The complete set of authors may be found at
+http://polymer.github.io/AUTHORS.txt The complete set of contributors may be
+found at http://polymer.github.io/CONTRIBUTORS.txt Code distributed by Google as
+part of the polymer project is also subject to an additional IP rights grant
+found at http://polymer.github.io/PATENTS.txt
 */
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/paper-input/paper-input-container.js';
+import '@polymer/paper-input/paper-input-error.js';
+import '@polymer/paper-styles/typography.js';
+import '@polymer/iron-input/iron-input.js';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
+
+import {IronFormElementBehavior} from '@polymer/iron-form-element-behavior/iron-form-element-behavior.js';
+import {PaperInputBehavior} from '@polymer/paper-input/paper-input-behavior.js';
+import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+
 /**
 `<gold-phone-input>` is a single-line text field with Material Design styling
 for entering a phone number.
@@ -45,32 +58,11 @@ style this element.
 `--gold-phone-input-country-code` | Mixin applied to the country code span
 
 @group Gold Elements
-@hero hero.svg
 @demo demo/index.html
 @class gold-phone-input
 */
-/*
-  FIXME(polymer-modulizer): the above comments were extracted
-  from HTML and may be out of place here. Review them and
-  then delete this comment!
-*/
-import '@polymer/polymer/polymer-legacy.js';
-
-import { PaperInputBehavior } from '@polymer/paper-input/paper-input-behavior.js';
-import '@polymer/paper-input/paper-input-container.js';
-import '@polymer/paper-input/paper-input-error.js';
-import '@polymer/paper-styles/typography.js';
-import '@polymer/iron-input/iron-input.js';
-import { IronFormElementBehavior } from '@polymer/iron-form-element-behavior/iron-form-element-behavior.js';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { DomModule } from '@polymer/polymer/lib/elements/dom-module.js';
-import { PolymerElement } from '@polymer/polymer/polymer-element.js';
-const $_documentContainer = document.createElement('template');
-$_documentContainer.setAttribute('style', 'display: none;');
-
-$_documentContainer.innerHTML = `<dom-module id="gold-phone-input">
-  <template>
+Polymer({
+  _template: html`
     <style>
       :host {
         display: block;
@@ -122,39 +114,47 @@ $_documentContainer.innerHTML = `<dom-module id="gold-phone-input">
         color: var(--paper-input-container-color, var(--secondary-text-color));
       }
     </style>
-    <paper-input-container id="container" disabled\$="[[disabled]]" no-label-float="[[noLabelFloat]]" always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]" invalid="[[invalid]]">
+    <paper-input-container
+        id="container"
+        disabled$="[[disabled]]"
+        no-label-float="[[noLabelFloat]]"
+        always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]"
+        invalid="[[invalid]]">
 
-      <label slot="label" hidden\$="[[!label]]">[[label]]</label>
+      <label slot="label" hidden$="[[!label]]">[[label]]</label>
 
       <span slot="prefix" prefix="" class="country-code">+[[countryCode]]</span>
 
-      <span id="template-placeholder"></span>
+      <iron-input
+          id="input"
+          slot="input"
+          bind-value="{{value}}"
+          allowed-pattern="[0-9\\-]"
+          invalid="{{invalid}}">
+        <input
+            id="nativeInput"
+            aria-labelledby$="[[_ariaLabelledBy]]"
+            aria-describedby$="[[_ariaDescribedBy]]"
+            required$="[[required]]"
+            name$="[[name]]"
+            autocomplete="tel"
+            type="tel"
+            disabled$="[[disabled]]"
+            autofocus$="[[autofocus]]"
+            inputmode$="[[inputmode]]"
+            placeholder$="[[placeholder]]"
+            readonly$="[[readonly]]"
+            maxlength$="[[maxlength]]"
+            size$="[[size]]">
+      </iron-input>
 
       <template is="dom-if" if="[[errorMessage]]">
         <paper-input-error slot="add-on" id="error">
           [[errorMessage]]
         </paper-input-error>
       </template>
-
     </paper-input-container>
-  </template>
-
-  <template id="v0">
-    <input is="iron-input" id="input" slot="input" aria-labelledby\$="[[_ariaLabelledBy]]" aria-describedby\$="[[_ariaDescribedBy]]" required\$="[[required]]" bind-value="{{value}}" name\$="[[name]]" allowed-pattern="[0-9\\-]" autocomplete="tel" type="tel" prevent-invalid-input="" disabled\$="[[disabled]]" invalid="{{invalid}}" autofocus\$="[[autofocus]]" inputmode\$="[[inputmode]]" placeholder\$="[[placeholder]]" readonly\$="[[readonly]]" maxlength\$="[[maxlength]]" size\$="[[size]]">
-  </template>
-
-  <template id="v1">
-    <iron-input id="input" slot="input" bind-value="{{value}}" allowed-pattern="[0-9\\-]" invalid="{{invalid}}">
-      <input id="nativeInput" aria-labelledby\$="[[_ariaLabelledBy]]" aria-describedby\$="[[_ariaDescribedBy]]" required\$="[[required]]" name\$="[[name]]" autocomplete="tel" type="tel" disabled\$="[[disabled]]" autofocus\$="[[autofocus]]" inputmode\$="[[inputmode]]" placeholder\$="[[placeholder]]" readonly\$="[[readonly]]" maxlength\$="[[maxlength]]" size\$="[[size]]">
-    </iron-input>
-  </template>
-
-  
-
-</dom-module>`;
-
-document.head.appendChild($_documentContainer.content);
-Polymer({
+  `,
 
   is: 'gold-phone-input',
 
@@ -165,12 +165,18 @@ Polymer({
     /**
      * The label for this input.
      */
-    label: {type: String, value: 'Phone number'},
+    label: {
+      type: String,
+      value: 'Phone number',
+    },
 
     /*
      * The country code that should be recognized and parsed.
      */
-    countryCode: {type: String, value: '1'},
+    countryCode: {
+      type: String,
+      value: '1',
+    },
 
     /*
      * The format of a valid phone number, including formatting but excluding
@@ -179,10 +185,13 @@ Polymer({
     phoneNumberPattern: {
       type: String,
       value: 'XXX-XXX-XXXX',
-      observer: '_phoneNumberPatternChanged'
+      observer: '_phoneNumberPatternChanged',
     },
 
-    value: {type: String, observer: '_onValueChanged'},
+    value: {
+      type: String,
+      observer: '_onValueChanged',
+    },
 
     /**
      * International format of the input value.
@@ -192,46 +201,24 @@ Polymer({
     internationalValue: {
       type: String,
       notify: true,
-      computed: '_computeInternationalValue(countryCode, value)'
+      computed: '_computeInternationalValue(countryCode, value)',
     }
   },
 
   observers: ['_onFocusedChanged(focused)'],
-
-  beforeRegister: function() {
-    var template = DomModule.import('gold-phone-input', 'template');
-    var version = PolymerElement ? 'v1' : 'v0';
-    var inputTemplate =
-        DomModule.import('gold-phone-input', 'template#' + version);
-    var inputPlaceholder =
-        template.content.querySelector('#template-placeholder');
-    if (inputPlaceholder) {
-      inputPlaceholder.parentNode.replaceChild(
-          inputTemplate.content, inputPlaceholder);
-    }
-  },
 
   /**
    * Returns a reference to the focusable element. Overridden from
    * PaperInputBehavior to correctly focus the native input.
    */
   get _focusableElement() {
-    return PolymerElement ? this.inputElement._inputElement :
-                             this.inputElement;
+    return this.inputElement._inputElement;
   },
 
-  // Note: This event is only available in the 2.0 version of this element.
-  // In 1.0, the functionality of `_onIronInputReady` is done in
-  // PaperInputBehavior::attached.
+  // Note: This event is only available in the 2+ version of this element.
   listeners: {
     'iron-input-ready': '_onIronInputReady',
-    'bind-value-changed': '_onBindValueChanged'
-  },
-
-  ready: function() {
-    if (this.value && !PolymerElement) {
-      this._handleAutoValidate();
-    }
+    'bind-value-changed': '_onBindValueChanged',
   },
 
   _onIronInputReady: function() {
