@@ -123,7 +123,7 @@ Polymer({
 
       <label slot="label" hidden$="[[!label]]">[[label]]</label>
 
-      <span slot="prefix" prefix="" class="country-code">+[[countryCode]]</span>
+      <span slot="prefix" prefix class="country-code">+[[countryCode]]</span>
 
       <iron-input
           id="input"
