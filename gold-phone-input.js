@@ -57,11 +57,11 @@ style this element.
 
 `--gold-phone-input-country-code` | Mixin applied to the country code span
 
-@group Gold Elements
 @demo demo/index.html
 @class gold-phone-input
 */
 Polymer({
+  /** @override */
   _template: html`
     <style>
       :host {
